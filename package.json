@@ -7,9 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.ts",
     "start": "node dist/server.js",
+    "postinstall": "tsc",
     "watch-node": "nodemon dist/server.js",
     "watch-ts": "tsc -w",
-    "deploy": "heroku create -a rhodesapi && git add . && git commit -m Heroku && git push heroku main && tsc"
+    "deploy": "heroku create -a rhodesapi && git add . && git commit -m Heroku && git push heroku main"
   },
   "keywords": [],
   "author": "",
