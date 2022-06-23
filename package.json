@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.ts"
+    "dev": "nodemon server.ts",
+    "start": "node dist/server.js",
+    "watch-node": "nodemon dist/server.js",
+    "watch-ts": "tsc -w",
+    "deploy": "heroku create -a rhodesapi && git add . && git commit -m Heroku && git push heroku main && tsc"
   },
   "keywords": [],
   "author": "",
@@ -24,5 +28,8 @@
     "@types/node-fetch": "^2.6.2",
     "nodemon": "^2.0.16",
     "typescript": "^4.7.4"
+  },
+  "engines" : {
+    "node": "16.14.0"
   }
 }
