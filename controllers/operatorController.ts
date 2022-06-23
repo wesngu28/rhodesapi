@@ -46,7 +46,7 @@ export const createOperator = async (req: Request, res: Response) => {
     await Operator.create(createOperator);
     res.status(200).json(createOperator);
   } catch (err: any) {
-    res.status(500).json( {error: err.message } );
+    res.status(500).json( {error: 'Something went wrong with your request. Are you sure this is an actual operator?' } );
   }
 }
 
@@ -91,7 +91,7 @@ export const updateOperator = async (req: Request, res: Response) => {
       res.status(200).json(updateOperator);
     } else {
       res.status(405).json({
-        error: 'Operator not old enough to be updated yet.'
+        error: 'Operator date not old enough to be updated yet.'
       });
     }
   } catch (err: any) {
