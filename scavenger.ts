@@ -26,9 +26,9 @@ async function scavenger() {
     const findOperator = await Operator.findOne({
       urlName: operators[i]
     });
-    if (findOperator && await findOperator.checkDate() === false) {
+    if (findOperator && findOperator.checkDate() === false) {
       console.log(`${operators[i]} already in database`)
-    } else if (findOperator && await findOperator.checkDate()){
+    } else if (findOperator && findOperator.checkDate()){
       const findOperator = await Operator.findOne({
         urlName: operators[i]
       });

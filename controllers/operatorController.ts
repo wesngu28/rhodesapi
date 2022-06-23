@@ -25,11 +25,7 @@ export const getOperator = async (req: Request, res: Response) => {
       res.status(404);
       throw new Error('Operator not found!');
     }
-    console.log(findOperator.checkDate());
-    if (await findOperator.checkDate()) {
-      res.status(200).json({ message: 'Operator was found, but the information could be out of date! Please '});
-    }
-    if (findOperator && await findOperator.checkDate() === false) {
+    if (findOperator) {
       res.status(200).json(findOperator);
     }
   } catch (err: any) {
