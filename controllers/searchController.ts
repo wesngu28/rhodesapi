@@ -4,7 +4,6 @@ import Operator from '../models/operatorModel';
 export const searchOperators = async (req: Request, res: Response) => {
   try {
     const objectLevel = ['gender', 'birth', 'race', 'building'];
-    console.log('handling');
     if(Object.keys(req.query).length === 0) {
       res.status(400).send('No parameters specified!');
       return;

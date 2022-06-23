@@ -220,7 +220,6 @@ export const getStaticInformation = async (url: string) => {
       }
       base.push(baseAddition);
     }
-    console.log(base);
     //Character Info Tables
     const characterInfo: { [key: string]: string } = {};
     const infoKeys: string[] = [];
@@ -318,7 +317,6 @@ export const getStaticInformation = async (url: string) => {
     //Increases execution time of scraper by 30 seconds
     const dynamics = await headlessInformation(url)
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
-    console.log(gamepressname);
     const dict = {
       "name": checkForExistence(name),
       "urlName": gamepressname,
