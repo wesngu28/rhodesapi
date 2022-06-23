@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Operator from '../models/operatorModel';
-const scraper = require("../scraper/scraper");
+import { getStaticInformation } from '../scraper/getStaticInformation';
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
 //Fetch all operators
@@ -42,7 +42,7 @@ export const createOperator = async (req: Request, res: Response) => {
     if (findOperator) {
       res.status(400).json( { error: 'Operator already exists!' } );
     }
-    const createOperator = await scraper.getStaticInformation(BASE_URL + name);
+    const createOperator = await getStaticInformation(BASE_URL + name);
     await Operator.create(createOperator);
     res.status(200).json(createOperator);
   } catch (err: any) {
@@ -57,7 +57,7 @@ export const updateOperator = async (req: Request, res: Response) => {
       name: name
     });
     if (findOperator && findOperator.checkDate()) {
-      const updateInfo = await scraper.getStaticInformation(BASE_URL + name);
+      const updateInfo = await getStaticInformation(BASE_URL + name);
       const updateOperator = await Operator.replaceOne({
         name: updateInfo.name
       }, {
