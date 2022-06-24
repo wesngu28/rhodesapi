@@ -6,7 +6,7 @@ import { getStaticInformation } from '../scraper/getStaticInformation';
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
 //Fetch all operators
-export const getAllOperators = async (res: Response) => {
+export const getAllOperators = async (req: Request, res: Response) => {
   try {
     const findOperator = await Operator.find();
     res.status(200).json(findOperator);
