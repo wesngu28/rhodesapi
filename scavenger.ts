@@ -4,8 +4,6 @@ import Operator from './models/operatorModel';
 import dotenv from 'dotenv';
 dotenv.config();
 import { getStaticInformation } from './scraper/getStaticInformation';
-import { load } from 'cheerio';
-import fetch from 'node-fetch';
 
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
