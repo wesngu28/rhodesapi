@@ -30,7 +30,7 @@ export const searchOperators = async (req: Request, res: Response) => {
           if(typeof keyValue === 'string') {
             let keyValueStr = keyValue as string;
             queries[formatKey] = keyValueStr.replace('-', ' ');
-            queries[formatKey] = keyValueStr.split(" ");
+            queries[formatKey] = (queries[formatKey] as string).split(" ");
             (queries[formatKey] as string[])!.forEach((word: string, index: number) => {
               (queries[formatKey] as string[])[index] = word;
             })
@@ -71,7 +71,7 @@ export const searchOperators = async (req: Request, res: Response) => {
       return;
     }
     if (findOperator[0] === undefined ) {
-      res.status(404).json( { error: 'Operator not found!' } );
+      res.status(404).json( { error: 'No operators found for this query!' } );
     }
     if (findOperator[0]) {
       res.status(200).json(findOperator);
