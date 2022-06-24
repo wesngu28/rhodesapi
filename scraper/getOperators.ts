@@ -24,4 +24,5 @@ export async function requester() {
   const operatorJSON = JSON.stringify(data, null, '\t');
   fs.writeFile('./operators.json',  operatorJSON, err => {
     if (err) { console.log("Error writing to file.")}});
+  return data;
 }

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import Operator from '../models/operatorModel';
-import operators from '../operators.json';
 import { requester } from '../scraper/getOperators';
 import { getStaticInformation } from '../scraper/getStaticInformation';
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
@@ -44,8 +43,8 @@ export const createOperator = async (req: Request, res: Response) => {
     if (findOperator) {
       res.status(400).json( { error: 'Operator already exists!' } );
     }
-    requester();
-    if(operators.includes(name)) {
+    const operatorList = await requester();
+    if(operatorList.includes(name)) {
       const createOperator = await getStaticInformation(BASE_URL + name);
       await Operator.create(createOperator);
       res.status(200).json(createOperator);
