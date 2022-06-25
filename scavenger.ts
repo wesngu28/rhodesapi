@@ -1,6 +1,6 @@
 import fs from 'fs';
 import mongoose from 'mongoose';
-import Operator from './models/operatorModel';
+import Operator, { operatorInterface } from './models/operatorModel';
 import dotenv from 'dotenv';
 dotenv.config();
 import { getStaticInformation } from './scraper/getStaticInformation';
@@ -22,21 +22,21 @@ async function scavenger() {
   for(let i = 0; i < operators.length; i++) {
     console.log(`Currently scraping information for ${operators[i]}. ${i+1}/${operators.length}`)
     const findOperator = await Operator.findOne({
-      urlName: operators[i]
+      _id: operators[i]
     });
     if (findOperator && findOperator.checkDate() === false) {
       console.log(`${operators[i]} already in database`)
     } else if (findOperator && findOperator.checkDate()){
       const findOperator = await Operator.findOne({
-        urlName: operators[i]
+        _id: operators[i]
       });
       if (findOperator && findOperator.checkDate()) {
         const updateInfo = await getStaticInformation(BASE_URL + operators[i]);
-        const updateOperator = await Operator.replaceOne({
+        const updateOperator: operatorInterface = await Operator.replaceOne({
           name: updateInfo.name
         }, {
+          "_id": updateInfo._id,
           "name": updateInfo.name,
-          "urlName": updateInfo.urlName,
           "rarity": updateInfo.rarity,
           "alter": updateInfo.alter,
           "artist": updateInfo.artist,

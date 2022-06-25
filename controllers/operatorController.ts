@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import Operator from '../models/operatorModel';
+import Operator, { operatorInterface } from '../models/operatorModel';
 import { requester } from '../scraper/getOperators';
 import { getStaticInformation } from '../scraper/getStaticInformation';
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
@@ -64,9 +64,10 @@ export const updateOperator = async (req: Request, res: Response) => {
     });
     if (findOperator && findOperator.checkDate()) {
       const updateInfo = await getStaticInformation(BASE_URL + name);
-      const updateOperator = await Operator.replaceOne({
+      const updateOperator: operatorInterface = await Operator.replaceOne({
         name: updateInfo.name
       }, {
+        "_id": updateInfo._id,
         "name": updateInfo.name,
         "rarity": updateInfo.rarity,
         "alter": updateInfo.alter,

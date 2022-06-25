@@ -11,27 +11,6 @@ type stats = {
   interval: string;
 }
 
-type lore = {
-  Gender: string;
-  'Place of Birth': string;
-  Birthday: string;
-  Race: string;
-  Height: string;
-  'Combat Experience': string;
-  'Infection Status': string;
-  'Physical Strength': string;
-  Mobility: String;
-  'Physiological Endurance': string;
-  'Tactical Planning': string;
-  'Combat Skill': string;
-  "Originium Adaptability": string;
-}
-
-type opDict = {
-  name: string;
-  value: string;
-}
-
 type skill = {
   name: string;
   spcost: string;
@@ -47,7 +26,7 @@ type module = {
   trust: string;
   availability: string;
   trait: string;
-  missions: string;
+  missions: string[];
 }
 
 type base = {
@@ -57,15 +36,10 @@ type base = {
   building: string;
 }
 
-type art = {
-  image: string;
+export interface operatorInterface {
+  _id: string;
   name: string;
-}
-
-interface Operator {
-  name: string;
-  urlName: string;
-  rarity: string;
+  rarity: number;
   alter: string;
   artist: string;
   va: string;
@@ -73,37 +47,37 @@ interface Operator {
   description: string;
   quote: string;
   voicelines: { [key: string]: string };
-  lore: lore;
-  affiliation: Array<String>;
-  class: Array<String>;
-  tags: Array<String>;
-  statistics: Array<{[key: string]: stats}>;
+  lore: { [key: string]: string };
+  affiliation: Array<string>;
+  class: Array<string>;
+  tags: Array<string>;
+  statistics: {base: stats, e0max: stats, e1max: stats, e2max: stats};
   trait: string;
   costs: {[key: string]: string};
-  potential: Array<opDict>;
-  trust: [{ [key: string]: string }];
-  talents: Array<opDict>;
+  potential: Array<{name: string, value: string;}>;
+  trust: { [key: string]: string };
+  talents: Array<{name: string, value: string;}>;
   skills: Array<skill>;
-  module: Array<module>;
+  module: module;
   base: Array<base>;
   headhunting: string;
   recruitable: string;
-  art: Array<art>;
+  art: {[key: string]: string};
   availability: string;
   url: string;
-  dateAdded: Date;
+  dateAdded?: Date;
 }
 
 interface OperatorMethods {
   checkDate(): Boolean;
 }
 
-type OperatorModel = mongoose.Model<Operator, {}, OperatorMethods>;
+type OperatorModel = mongoose.Model<operatorInterface, {}, OperatorMethods>;
 
-const OperatorSchema = new mongoose.Schema<Operator, OperatorModel, OperatorMethods>({
+const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel, OperatorMethods>({
+  _id: String,
   name: String,
-  urlName: String,
-  rarity: String,
+  rarity: Number,
   alter: String,
   artist: String,
   va: String,
@@ -115,26 +89,26 @@ const OperatorSchema = new mongoose.Schema<Operator, OperatorModel, OperatorMeth
   affiliation: [],
   class: [],
   tags: [],
-  statistics: [{}],
+  statistics: {},
   trait: String,
   costs: {},
   potential: [{}],
-  trust: [{}],
+  trust: {},
   talents: [{}],
   skills: [{}],
-  module: [{}],
+  module: {},
   base: [{}],
   headhunting: String,
   recruitable: String,
-  art: [{}],
+  art: {},
   availability: String,
   url: String,
   dateAdded: {
     type: Date,
     default: () => Date.now()
   }},{
-    collation: { locale: 'en', strength: 2 }
-});
+    collation: { locale: 'en', strength: 2 },
+},);
 
 OperatorSchema.method('checkDate', function checkDate() {
   const date1 = this.dateAdded.getTime();
@@ -147,4 +121,4 @@ OperatorSchema.method('checkDate', function checkDate() {
   }
 });
 
-export default mongoose.model<Operator, OperatorModel>('Operator', OperatorSchema);
+export default mongoose.model<operatorInterface, OperatorModel>('Operator', OperatorSchema);
