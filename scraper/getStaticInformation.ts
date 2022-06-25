@@ -1,10 +1,13 @@
 import fetch from 'node-fetch';
-import { load } from 'cheerio';
-import { headlessInformation } from './headlessInformation';
+import { load } from 'cheerio'
+import { getStatistics } from './getStatistics';
+import { getCosts } from './getCosts';
 import { sleep } from './sleep';
+import { operatorInterface } from '../models/operatorModel';
+import puppeteer from 'puppeteer';
 
 export const getStaticInformation = async (url: string) => {
-  try {
+  // try {
     const operatorHTML = await fetch(url);
 
     const $ = load(await operatorHTML.text());
@@ -265,7 +268,7 @@ export const getStaticInformation = async (url: string) => {
     voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
     //Art
-    let imgList: Array<{image: string, name: string}> = [];
+    const operatorArt: { [key: string] : string } = {};
     const imgSrcList: string[] = [];
     $('.operator-image > a > img').each(function(){
       imgSrcList.push($(this).attr('src')!)});
@@ -273,29 +276,35 @@ export const getStaticInformation = async (url: string) => {
     $('.operator-image > a').each(function(){
       imgLinkList.push($(this).attr('href')!);
     });
-    const temp: { [key: string]: {image: string, name: string} } = {};
-    for (let i = 1; i < imgSrcList.length; i++) {
-      // let name = 'img' + i;
-      temp.name = {
-        image: imgSrcList[i],
-        name: imgLinkList[i]
+    imgLinkList.forEach((imgLinkList, i) => {
+      operatorArt[imgLinkList] = imgSrcList[i];
+    });
+    const compare = Object.keys(operatorArt);
+    for (let i = 0; i < imgLinkList.length; i++) {
+      operatorArt[compare[i]] = 'https://gamepress.gg' + operatorArt[compare[i]];
+      if(rarity > 2 && i === 0) {
+        delete operatorArt[compare[i]];
       }
-      imgList.push(temp.name);
-    }
-    for (let i = 0; i < imgList.length; i++) {
-      if (!imgList[i].name.includes('png')) {
-        const url = 'https://gamepress.gg/' + imgList[i].name;
+      if(rarity === 2 && i === 0) {
+        operatorArt['Base'] = operatorArt[compare[i]];
+        delete operatorArt[compare[i]];
+      }
+      if(rarity > 2 && i === 1) {
+        operatorArt['Base'] = operatorArt[compare[i]];
+        delete operatorArt[compare[i]];
+      }
+      if(compare[i].includes('https') && i === 2) {
+        operatorArt['E2'] = operatorArt[compare[i]];
+        delete operatorArt[compare[i]];
+      }
+      if (!compare[i].includes('png')) {
+        const url = 'https://gamepress.gg/' + compare[i];
         const test = await fetch(url);
         const $ = load(await test.text());
         const name = $('#page-title > h1').text();
-        imgList[i].name = name;
+        operatorArt[name] = operatorArt[compare[i]];
+        delete operatorArt[compare[i]];
       }
-    }
-    if(imgList[0]) {
-      imgList[0].name = 'E1';
-    }
-    if (imgList[1] && imgList[1].name.includes('https')) {
-      imgList[1].name = 'E2';
     }
     function checkForExistence(field: any) : string {
       if (field) {
@@ -315,37 +324,48 @@ export const getStaticInformation = async (url: string) => {
 
     //Use puppeteer to interact with page (level costs and statistics).
     //Increases execution time of scraper by 30 seconds
-    const dynamics = await headlessInformation(url)
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox','--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080});
+    await page.goto(url);
+    await sleep(1000);
+    const costs = await getCosts(page);
+    const statistics = await getStatistics(page);
+    await browser.close();
+
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
-    const dict = {
+    const dict: operatorInterface = {
+      "_id": gamepressname,
       "name": checkForExistence(name),
-      "urlName": gamepressname,
       "rarity": rarity,
       "alter": checkForExistence(alter),
       "artist": checkForExistence(artist),
       "va": checkForExistence(jpva),
       "biography": checkForExistence(biography),
-      "description": description[1],
-      "quote": description[2],
+      "description": description[1] as string,
+      "quote": description[2] as string,
       "voicelines": voiceLines,
       "lore": characterInfo,
       "affiliation": affiliations,
       "class": uniqueClasses,
       "tags": recruitment,
-      "statistics": dynamics[1],
-      "trait": description[0],
-      "costs": dynamics[0],
+      "statistics": statistics,
+      "trait": description[0] as string,
+      "costs": costs,
       "potential": potential,
       "trust": trust,
       "talents": talent,
       "skills": skills,
       "module": module,
       "base": base,
-      "headhunting": obtainable[0],
-      "recruitable": obtainable[1],
-      "art": imgList,
+      "headhunting": obtainable[0] as string,
+      "recruitable": obtainable[1] as string,
+      "art": operatorArt,
       "availability": '',
-      "url": ''
+      "url": '',
     }
     const availability = $('.obtain-approach-table').text();
     if(availability.includes('N/A')){
@@ -355,7 +375,7 @@ export const getStaticInformation = async (url: string) => {
     }
     dict['url'] = url;
     return dict;
-  } catch (err: any) {
-    throw new Error(err.message);
-  }
+  // } catch (err: any) {
+  //   throw new Error(err.message);
+  // }
 }
