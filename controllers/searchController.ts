@@ -22,6 +22,13 @@ export const searchOperators = async (req: Request, res: Response) => {
           let keyValueStr = keyValue as string;
           queries[key] = keyValueStr!.charAt(0).toUpperCase() + keyValueStr.slice(1);
         }
+        if(formatKey === 'alter') {
+          queries[key] = { $ne : 'Not provided' }
+        }
+        if(formatKey === 'va') {
+          let keyValueStr = queries[formatKey] as string;
+          queries[formatKey] = keyValueStr.replace('-', ' ');
+        }
       } else {
         queries[formatKey] = queries[key];
         delete queries[key];
