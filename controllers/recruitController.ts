@@ -5,10 +5,14 @@ export const recruitment = async (req: Request, res: Response) => {
   try {
     let tag1 = req.params.tagone;
     let tag2 = req.params.tagtwo;
+    let tag3 = req.params.tagthree;
     if(tag1) {
       let findOperators = await Operator.find({ tags: tag1, recruitable: "Yes" });
       if(tag2) {
-        findOperators = await Operator.find( { tags: { $all: [tag1, tag2] }, recruitable :"Yes" } );
+        findOperators = await Operator.find( { tags : { $all: [tag1, tag2] }, recruitable: 'Yes' } );
+      }
+      if(tag3) {
+        findOperators = await Operator.find( { tags: { $all: [tag1, tag2, tag3] }, recruitable :"Yes" } );
       }
       if (findOperators) {
         res.status(200).json(findOperators);
