@@ -5,7 +5,7 @@ An API for the mobile gacha tower defense game Arknights hosted on Heroku made a
 Use a HTTP client (IE: fetch, axios, requests)
 
 ### Base API URL
->https://rhodesapi.herokuapp.com/api/rhodes/>
+>https://rhodesapi.herokuapp.com/api/rhodes/
 
 ### Endpoints
 
