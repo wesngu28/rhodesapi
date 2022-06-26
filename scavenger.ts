@@ -1,21 +1,15 @@
 import fs from 'fs';
-import mongoose from 'mongoose';
+import { neuralConnect } from './models/connect';
 import Operator, { operatorInterface } from './models/operatorModel';
 import dotenv from 'dotenv';
 dotenv.config();
 import { getStaticInformation } from './scraper/getStaticInformation';
-import { getCosts } from './scraper/getCosts';
 
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
-mongoose.connect(process.env.MONGODB_URI!, (err: any)=> {
-  if (err) throw err;
-})
+neuralConnect();
 
-//requester();
-// scavenger();
-// weird();
-// addClassToTags();
+scavenger();
 
 async function scavenger() {
   console.log('Starting to scrape:');
@@ -72,31 +66,6 @@ async function scavenger() {
       console.log(createdOperator.costs);
       await Operator.create(createdOperator);
       console.log(`${operators[i]} recruited`)
-      // doesCostExist();
     }
   }
-}
-async function weird() {
-  const findOperator = await Operator.find({
-    artist: 'Wé[email protected]'
-  });
-  for(let i = 0; i < findOperator.length; i++) {
-    findOperator[i].artist = 'Wéi@W';
-    await findOperator[i].save();
-  }
-}
-
-async function addClassToTags() {
-  const findOperator = await Operator.find({});
-  findOperator.forEach(async (operator) => {
-    for(let i = 0; i === 0; i++) {
-      operator.tags.push(operator.class[0]);
-    }
-    await operator.save();
-  });
-}
-
-async function doesCostExist() {
-  const findOperator = await Operator.find({ 'costs.Costs' : 'Not provided in Gamepress'} , {name: 1});
-  console.log(findOperator);
 }
