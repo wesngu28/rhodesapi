@@ -16,18 +16,26 @@ export const getAllOperators = async (req: Request, res: Response) => {
 
 export const getOperator = async (req: Request, res: Response) => {
   try {
-    let name = req.params.name;
-    name = name.replaceAll('-', ' ');
-    name = name.replaceAll('_', ' ');
+    const name = req.params.name;
+    let nameQuery = name.replaceAll('-', ' ');
+    nameQuery = name.replaceAll('_', ' ');
     const findOperator = await Operator.findOne({
-      name: name
+      name: nameQuery
     });
-    if (!findOperator) {
-      res.status(404);
-      throw new Error('Operator not found!');
+    const findAnotherOperator = await Operator.findOne({
+      _id: name
+    });
+    if (!findOperator && !findAnotherOperator) {
+      res.status(404).json( { error: 'Operator not found'});
     }
-    if (findOperator) {
-      res.status(200).json(findOperator);
+    if (findOperator || findAnotherOperator) {
+      if(findOperator) {
+        res.status(200).json(findOperator);
+        return;
+      }
+      if(findAnotherOperator) {
+        res.status(200).json(findAnotherOperator);
+      }
     }
   } catch (err: any) {
     res.status(500).json( { error: err.message } );
