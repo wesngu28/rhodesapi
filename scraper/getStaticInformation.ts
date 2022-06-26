@@ -7,7 +7,7 @@ import { operatorInterface } from '../models/operatorModel';
 import puppeteer from 'puppeteer';
 
 export const getStaticInformation = async (url: string) => {
-  // try {
+  try {
     const operatorHTML = await fetch(url);
 
     const $ = load(await operatorHTML.text());
@@ -32,7 +32,7 @@ export const getStaticInformation = async (url: string) => {
     })
 
     //Artist Link
-    const artist = $('.profile-info-table > table > tbody > tr > td > a:first');
+    let artist = $('.profile-info-table > table > tbody > tr > td > a:first');
 
     //Voice Actor (Japanese)
     const jpva = $('.profile-info-table > table > tbody > tr:nth-child(2) > td > a');
@@ -55,6 +55,7 @@ export const getStaticInformation = async (url: string) => {
     })
     //one of the tags are already included in classes, pop off
     recruitment.pop();
+    recruitment.push(classes[0]);
 
     //Obtainable, can return 3 length array if operator is limited
     const obtainable: string[] = [];
@@ -314,6 +315,9 @@ export const getStaticInformation = async (url: string) => {
           field = `Not provided`;
           return field;
         } else {
+          if(field === 'Wé[email protected]') {
+            field = 'Wéi@W';
+          }
           return field;
         }
       } else {
@@ -375,7 +379,7 @@ export const getStaticInformation = async (url: string) => {
     }
     dict['url'] = url;
     return dict;
-  // } catch (err: any) {
-  //   throw new Error(err.message);
-  // }
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
 }
