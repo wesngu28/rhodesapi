@@ -25,7 +25,12 @@ export const searchOperators = async (req: Request, res: Response) => {
         if(formatKey === 'alter') {
           queries[key] = { $ne : 'Not provided' }
         }
-        if(formatKey === 'va') {
+        if(formatKey === 'module') {
+          queries['module.name'] = queries[formatKey];
+          delete queries[formatKey];
+          queries['module.name'] = { $ne : 'Not provided' }
+        }
+        if(formatKey === 'va' || formatKey === 'artist') {
           let keyValueStr = queries[formatKey] as string;
           queries[formatKey] = keyValueStr.replace('-', ' ');
         }
