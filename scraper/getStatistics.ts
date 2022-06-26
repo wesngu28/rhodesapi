@@ -46,6 +46,5 @@ export const getStatistics = async (page: Page) => {
     e1max: stats[2],
     e2max: stats[3]
   }
-  console.log(statistics);
   return statistics;
 }
