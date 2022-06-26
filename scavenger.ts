@@ -4,6 +4,7 @@ import Operator, { operatorInterface } from './models/operatorModel';
 import dotenv from 'dotenv';
 dotenv.config();
 import { getStaticInformation } from './scraper/getStaticInformation';
+import { getCosts } from './scraper/getCosts';
 
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
@@ -12,14 +13,15 @@ mongoose.connect(process.env.MONGODB_URI!, (err: any)=> {
 })
 
 //requester();
-scavenger();
-weird();
+// scavenger();
+// weird();
+// addClassToTags();
 
 async function scavenger() {
   console.log('Starting to scrape:');
   let operators = fs.readFileSync('operators.json','utf8')
   operators = JSON.parse(operators);
-  for(let i = 0; i < operators.length; i++) {
+  for(let i = 24; i < operators.length; i++) {
     console.log(`Currently scraping information for ${operators[i]}. ${i+1}/${operators.length}`)
     const findOperator = await Operator.findOne({
       _id: operators[i]
@@ -67,8 +69,10 @@ async function scavenger() {
       }
     } else {
       const createdOperator = await getStaticInformation(BASE_URL + operators[i]);
+      console.log(createdOperator.costs);
       await Operator.create(createdOperator);
       console.log(`${operators[i]} recruited`)
+      // doesCostExist();
     }
   }
 }
@@ -80,4 +84,19 @@ async function weird() {
     findOperator[i].artist = 'Wéi@W';
     await findOperator[i].save();
   }
+}
+
+async function addClassToTags() {
+  const findOperator = await Operator.find({});
+  findOperator.forEach(async (operator) => {
+    for(let i = 0; i === 0; i++) {
+      operator.tags.push(operator.class[0]);
+    }
+    await operator.save();
+  });
+}
+
+async function doesCostExist() {
+  const findOperator = await Operator.find({ 'costs.Costs' : 'Not provided in Gamepress'} , {name: 1});
+  console.log(findOperator);
 }
