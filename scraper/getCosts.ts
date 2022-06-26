@@ -29,6 +29,9 @@ export const getCosts = async (page: Page) => {
   }
   const costTable: {[key: string]: string} = {};
   costNames.forEach((costNames, i) => costTable[costNames] = costQuantity[i]);
-
+  const doCostsExist = Object.keys(costTable);
+  if(doCostsExist.length === 0) {
+    costTable['Costs'] = 'Not provided in Gamepress';
+  }
   return costTable;
 }
