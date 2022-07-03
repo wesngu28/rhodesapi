@@ -75,7 +75,6 @@ export const updateOperator = async (req: Request, res: Response) => {
       const updateOperator: operatorInterface = await Operator.replaceOne({
         name: updateInfo.name
       }, {
-        "_id": updateInfo._id,
         "name": updateInfo.name,
         "rarity": updateInfo.rarity,
         "alter": updateInfo.alter,
