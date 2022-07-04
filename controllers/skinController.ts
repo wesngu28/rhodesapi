@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Operator from '../models/operatorModel';
 
-const getE2 = async (req: Request, res: Response) => {
+export const getE2 = async (req: Request, res: Response) => {
   try {
     let name = req.params.name;
     const findOperator = await Operator.findOne({ name: name }, { art : 1 });
@@ -19,7 +19,7 @@ const getE2 = async (req: Request, res: Response) => {
   }
 }
 
-const getSkins = async (req: Request, res: Response) => {
+export const getSkins = async (req: Request, res: Response) => {
   try {
     let name = req.params.name;
     const findOperator = await Operator.findOne({ name: name }, { art : 1 });
@@ -37,4 +37,3 @@ const getSkins = async (req: Request, res: Response) => {
     res.status(500).json( { error: err.message } );
   }
 }
-module.exports = { getSkins, getE2 };
