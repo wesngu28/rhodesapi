@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import { getOrSetToCache } from '../middleware/getOrSetToCache';
 import Operator from '../models/operatorModel';
+import { RedisClient } from '../models/redis';
 
 export const searchOperators = async (req: Request, res: Response) => {
   try {
@@ -75,19 +77,23 @@ export const searchOperators = async (req: Request, res: Response) => {
         }
       }
     });
-    const findOperator = await Operator.find(
-      queries
-    );
-    if(findOperator.length === await Operator.countDocuments({}).exec()){
-      res.status(400).json( { error: 'Invalid parameter specified!' } );
+    const matchOperators = await getOrSetToCache(`search?queries=${queries}`, async ()=> {
+      const findOperator = await Operator.find(
+        queries
+      );
+      if(findOperator.length === await Operator.countDocuments({}).exec()){
+        res.status(400).json( { error: 'Invalid parameter specified!' } );
+        return;
+      }
+      if (findOperator[0] === undefined ) {
+        res.status(404).json( { error: 'No operators found for this query!' } );
+      }
+      if (findOperator[0]) {
+        return findOperator;
+      }
       return;
-    }
-    if (findOperator[0] === undefined ) {
-      res.status(404).json( { error: 'No operators found for this query!' } );
-    }
-    if (findOperator[0]) {
-      res.status(200).json(findOperator);
-    }
+    });
+    res.status(200).json(matchOperators);
   } catch (err: any) {
     res.status(500).json( { error: err.message } );
   }

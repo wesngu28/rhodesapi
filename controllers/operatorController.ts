@@ -2,13 +2,18 @@ import { Request, Response } from 'express';
 import Operator, { operatorInterface } from '../models/operatorModel';
 import { requester } from '../scraper/getOperators';
 import { getStaticInformation } from '../scraper/getStaticInformation';
+import { RedisClient } from '../models/redis';
+import { getOrSetToCache } from '../middleware/getOrSetToCache';
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
 //Fetch all operators
 export const getAllOperators = async (req: Request, res: Response) => {
   try {
-    const findOperator = await Operator.find();
-    res.status(200).json(findOperator);
+    const operators = await getOrSetToCache(`operator`, async ()=> {
+      const allOperators = await Operator.find();
+      return allOperators;
+    });
+    res.status(200).json(operators);
   } catch (err: any) {
     res.status(500).json( { error: err.message } )
   }
@@ -17,25 +22,22 @@ export const getAllOperators = async (req: Request, res: Response) => {
 export const getOperator = async (req: Request, res: Response) => {
   try {
     const name = req.params.name;
-    let nameQuery = name.replaceAll('-', ' ');
-    nameQuery = name.replaceAll('_', ' ');
-    const findOperator = await Operator.findOne({
-      name: nameQuery
-    });
-    const findAnotherOperator = await Operator.findOne({
-      _id: name
-    });
-    if (!findOperator && !findAnotherOperator) {
-      res.status(404).json( { error: 'Operator not found'});
-    }
-    if (findOperator || findAnotherOperator) {
+    const operator = await getOrSetToCache(`operator?name=${name}`, async ()=> {
+      let nameQuery = name.replaceAll('-', ' ');
+      nameQuery = name.replaceAll('_', ' ');
+      const findOperator = await Operator.findOne({
+        $or: [{ name: nameQuery }, { _id: name }],
+      })
       if(findOperator) {
-        res.status(200).json(findOperator);
+        return findOperator;
+      } else {
+        res.status(404).json( { error: 'Operator not found'});
         return;
       }
-      if(findAnotherOperator) {
-        res.status(200).json(findAnotherOperator);
-      }
+    });
+    if(operator) {
+      res.status(200).json(operator);
+      return;
     }
   } catch (err: any) {
     res.status(500).json( { error: err.message } );

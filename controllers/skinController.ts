@@ -1,18 +1,26 @@
 import { Request, Response } from 'express';
+import { getOrSetToCache } from '../middleware/getOrSetToCache';
 import Operator from '../models/operatorModel';
 
 export const getE2 = async (req: Request, res: Response) => {
   try {
     let name = req.params.name;
-    const findOperator = await Operator.findOne({ name: name }, { art : 1 });
-    if (findOperator) {
-      if (findOperator.art.E2) {
-        res.status(200).json( { e2: 'https://gamepress.gg' + findOperator.art.E2 } );
-        return
-      } else {
+    const e2Skin = await getOrSetToCache(`e2?name=${name}`, async ()=> {
+      const findOperator = await Operator.findOne({ name: name }, { art : 1 });
+      if (findOperator) {
+        if (findOperator.art.E2) {
+          const e2Obj = {
+            e2: findOperator.art.E2
+          }
+          return e2Obj;
+        }
         res.status(400).json( { error: 'Operator does not have an e2.' } );
+        return;
       }
-    }
+      res.status(400).json( { error: 'Specified operator does not exist.' } );
+      return;
+    });
+    res.status(200).json(e2Skin);
   } catch (err) {
     res.status(400);
     res.type('text').send('An error occurred on the server. Try again later.');
@@ -22,17 +30,23 @@ export const getE2 = async (req: Request, res: Response) => {
 export const getSkins = async (req: Request, res: Response) => {
   try {
     let name = req.params.name;
-    const findOperator = await Operator.findOne({ name: name }, { art : 1 });
-    if (findOperator) {
-      const skins: {[key: string] : string} = findOperator['art'];
-      delete skins['Base'];
-      delete skins['E2'];
-      if(Object.keys(skins).length === 0) {
-        res.status(400).json( {error: 'Operator does not have any skins' });
-      } else {
-        res.status(200).json(skins);
+    const matchSkins = await getOrSetToCache(`skins?name=${name}`, async ()=> {
+      const findOperator = await Operator.findOne({ name: name }, { art : 1 });
+      if (findOperator) {
+        const skins: {[key: string] : string} = findOperator['art'];
+        delete skins['Base'];
+        delete skins['E2'];
+        if(Object.keys(skins).length === 0) {
+          res.status(400).json( {error: 'Operator does not have any skins' });
+          return;
+        } else {
+          return skins;
+        }
       }
-    }
+      res.status(400).json( { error: 'Specified operator does not exist.' } );
+      return;
+    });
+    res.status(200).json(matchSkins);
   } catch (err: any) {
     res.status(500).json( { error: err.message } );
   }
