@@ -330,7 +330,8 @@ export const getStaticInformation = async (url: string) => {
     //Increases execution time of scraper by 30 seconds
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox','--disable-setuid-sandbox']
+      userDataDir: './puppet',
+      args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
     });
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080});
