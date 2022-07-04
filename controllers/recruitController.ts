@@ -20,11 +20,12 @@ export const recruitment = async (req: Request, res: Response) => {
           return findOperators
         }
       }
-      res.status(400).json( { error: 'No recruitable operators with this combination.' });
+      res.status(404).json( { error: 'No recruitable operators with this combination.' });
       return;
     });
+    if(!recruitableOperators) return;
     res.status(200).json(recruitableOperators);
   } catch (err: any) {
-    res.status(400).json( { error: err.message } )
+    res.status(500).json( { error: err.message } )
   }
 }

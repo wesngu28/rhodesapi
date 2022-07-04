@@ -93,6 +93,7 @@ export const searchOperators = async (req: Request, res: Response) => {
       }
       return;
     });
+    if(!matchOperators) return;
     res.status(200).json(matchOperators);
   } catch (err: any) {
     res.status(500).json( { error: err.message } );

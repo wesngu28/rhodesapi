@@ -35,10 +35,8 @@ export const getOperator = async (req: Request, res: Response) => {
         return;
       }
     });
-    if(operator) {
-      res.status(200).json(operator);
-      return;
-    }
+    if(operator!) return;
+    res.status(200).json(operator);
   } catch (err: any) {
     res.status(500).json( { error: err.message } );
   }

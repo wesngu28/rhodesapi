@@ -17,13 +17,13 @@ export const getE2 = async (req: Request, res: Response) => {
         res.status(400).json( { error: 'Operator does not have an e2.' } );
         return;
       }
-      res.status(400).json( { error: 'Specified operator does not exist.' } );
+      res.status(404).json( { error: 'Specified operator does not exist.' } );
       return;
     });
+    if(!e2Skin) return;
     res.status(200).json(e2Skin);
-  } catch (err) {
-    res.status(400);
-    res.type('text').send('An error occurred on the server. Try again later.');
+  } catch (err: any) {
+    res.status(500).json( { error: err.message } );
   }
 }
 
@@ -43,9 +43,11 @@ export const getSkins = async (req: Request, res: Response) => {
           return skins;
         }
       }
-      res.status(400).json( { error: 'Specified operator does not exist.' } );
+      res.status(404).json( { error: 'Specified operator does not exist.' } );
       return;
     });
+    console.log(matchSkins);
+    if(!matchSkins) return;
     res.status(200).json(matchSkins);
   } catch (err: any) {
     res.status(500).json( { error: err.message } );
