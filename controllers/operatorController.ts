@@ -7,15 +7,15 @@ const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
 //Fetch all operators
 export const getAllOperators = async (req: Request, res: Response) => {
-  try {
+  // try {
     const operators = await getOrSetToCache(`operator`, async ()=> {
       const allOperators = await Operator.find();
       return allOperators;
     });
     res.status(200).json(operators);
-  } catch (err: any) {
-    res.status(500).json( { error: err.message } )
-  }
+  // } catch (err: any) {
+  //   res.status(500).json( { error: err.message } )
+  // }
 }
 
 export const getOperator = async (req: Request, res: Response) => {
