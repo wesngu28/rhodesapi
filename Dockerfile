@@ -1,6 +1,6 @@
 FROM node:16
 
-WORKDIR /usr/rhodesapi
+WORKDIR /rhodesapi
 
 COPY package*.json ./
 COPY tsconfig*.json ./

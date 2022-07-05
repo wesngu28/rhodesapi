@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - "5219:5219"
+    env_file:
+      - .env
+    volumes:
+      - .:/rhodesapi
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+volumes:
+  redis:
