@@ -6,13 +6,12 @@ class Redis {
   public expirationDefault: number;
 
   constructor() {
-    console.log(`${process.env.REDIS_URL} is being loaded in here??`);
-    if(process.env.REDIS_URL) {
+    if(process.env.REDIS_HOST) {
       this.client = createClient({
-        url: process.env.REDIS_URL,
+        password: process.env.REDIS_PASSWORD,
         socket: {
-          tls: true,
-          rejectUnauthorized: false
+          host: process.env.REDIS_HOST,
+          port: Number(process.env.REDIS_PORT)
         }
         });
     } else {
