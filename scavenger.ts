@@ -3,7 +3,7 @@ import { neuralConnect } from './models/connect';
 import Operator, { operatorInterface } from './models/operatorModel';
 import dotenv from 'dotenv';
 dotenv.config();
-import { getStaticInformation } from './scraper/getStaticInformation';
+import { getStaticInformation } from './util/getStaticInformation';
 
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 

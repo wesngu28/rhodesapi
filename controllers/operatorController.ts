@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import Operator, { operatorInterface } from '../models/operatorModel';
-import { requester } from '../scraper/getOperators';
-import { getStaticInformation } from '../scraper/getStaticInformation';
-import { RedisClient } from '../models/redis';
+import { requester } from '../util/getOperators';
+import { getStaticInformation } from '../util/getStaticInformation';
 import { getOrSetToCache } from '../middleware/getOrSetToCache';
 const BASE_URL = 'https://gamepress.gg/arknights/operator/';
 
@@ -35,7 +34,7 @@ export const getOperator = async (req: Request, res: Response) => {
         return;
       }
     });
-    if(operator!) return;
+    if(!operator) return;
     res.status(200).json(operator);
   } catch (err: any) {
     res.status(500).json( { error: err.message } );
