@@ -1,5 +1,5 @@
 # RhodesAPI
-An API for the mobile gacha tower defense game Arknights hosted on Heroku made as a personal project. Requests data through querying from a MongoDB database which is filled with data scraped from each operator's page on Gamepress.
+An API for the mobile gacha tower defense game Arknights hosted on Heroku made as a personal project. Requests data through querying from a MongoDB database which is filled with data scraped from each operator's page on Gamepress. When making a request to the API, a delay in response could be due to Heroku sleeping the application and it needing to be booted on.
 
 ## Usage
 Use a HTTP client (IE: fetch, axios, requests)
@@ -21,7 +21,7 @@ Get a singular operator and their associated information.
   <summary>
     Sample of request querying Surtr
   </summary>
-  
+
 ```javascript
 {
   "_id": "Surtr",
@@ -308,7 +308,7 @@ Get the e2 artwork of the specified operator, if they have one.
   <summary>
     Sample of request querying for Surtr's e2 art.
   </summary>
-  
+
 ```javascript
 {
   "e2": "https://gamepress.gghttps://gamepress.gg/arknights/sites/arknights/files/2020-09/char_350_surtr_2.png"
@@ -322,7 +322,7 @@ Get the skins of the specified operator, if they have skins.
   <summary>
     Sample of request querying for Surtr's skins.
   </summary>
-  
+
 ```javascript
 {
   "Liberté//Échec": "https://gamepress.gg/arknights/sites/arknights/files/2021-06/char_350_surtr_it%231.png"
@@ -348,10 +348,10 @@ Do not specify a value for these queries as they will return operator's with alt
   <summary>
     Sample of request querying for Sarkaz DPS guards.
   </summary>
-  
+
 ```javascript
   https://rhodesapi.herokuapp.com/api/rhodes/search?race=sarkaz&class=guard&tags=dps
-  
+
 [
   {
     "_id": "Surtr",
@@ -1339,5 +1339,10 @@ Similar to the search query but supports only up to three tags. Returns matching
 ### Notes
 This is a personal project made to both learn how to make an API and get familiar with some TypeScript syntax. This was originally wrote in JavaScript but was converted into TypeScript.
 
-The scraper and operator.json updater does not run on a set interval due to the sheer length of time it takes to scrape 200+ operators with built in delays. I chose to include user-based updates based on certain conditions (new operators, operator information going past a certain date) but most likely I will asynchronously update the database manually..
+The scraper and operator.json updater does not run on a set interval due to the sheer length of time it takes to scrape 200+ operators with built in delays. I chose to include user-based updates based on certain conditions (new operators, operator information going past a certain date) but most likely I will asynchronously update the database manually.
 
+With this project I began to become more comfortable using TypeScript, as well as using MongoDB for a large amount of data and caching that data with Redis to speed up the queries, especially seeing as the api is remotely hosted on Heroku. I also was given exposure to both using Docker and Docker Compose for local development.
+
+If possible I would have loved to host this somewhere with a better plan than free on Heroku as some problems I have are the cold start, not being able to use the docker-compose, and the lack of a static IP (I looked into the extensions).
+
+Used Technologies: Visual Studio Code, Javascript, Typescript, Node.JS, Express, MongoDB (Mongoose, Compass, Atlas), Redis, Heroku, Playwright, Cheerio, Docker
