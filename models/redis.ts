@@ -6,9 +6,10 @@ class Redis {
   public expirationDefault: number;
 
   constructor() {
-    this.client = createClient({
-      url: 'redis://redis:6379'
-      });
+    // this.client = createClient({
+    //   url: 'redis://redis:6379'
+    //   });
+    this.client = createClient({});
     this.expirationDefault = 86400000;
   }
 
