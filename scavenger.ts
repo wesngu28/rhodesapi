@@ -63,7 +63,6 @@ async function scavenger() {
       }
     } else {
       const createdOperator = await getStaticInformation(BASE_URL + operators[i]);
-      console.log(createdOperator.costs);
       await Operator.create(createdOperator);
       console.log(`${operators[i]} recruited`)
     }
