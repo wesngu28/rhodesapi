@@ -9,16 +9,20 @@ dotenv.config();
 
 const app = express();
 
-neuralConnect();
+start();
 
-app.use('/api/rhodes/operator', operatorRouter);
-app.use('/api/rhodes/search', searchRouter);
-app.use('/api/rhodes/skins', skinRouter);
-app.use('/api/rhodes/recruit', recruitmentRouter);
+async function start() {
+  await neuralConnect();
 
-app.use('*', (req, res) => {
-  res.status(404).json( { error: "Resource not found"})
-})
+  app.use('/api/rhodes/operator', operatorRouter);
+  app.use('/api/rhodes/search', searchRouter);
+  app.use('/api/rhodes/skins', skinRouter);
+  app.use('/api/rhodes/recruit', recruitmentRouter);
 
-const PORT = process.env.PORT || 5219;
-app.listen(PORT, () => console.log(`Listening on ${PORT}!`));
+  app.use('*', (req, res) => {
+    res.status(404).json( { error: "Resource not found"})
+  })
+
+  const PORT = process.env.PORT || 5219;
+  app.listen(PORT, () => console.log(`Listening on ${PORT}!`));
+}
