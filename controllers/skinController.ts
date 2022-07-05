@@ -46,7 +46,6 @@ export const getSkins = async (req: Request, res: Response) => {
       res.status(404).json( { error: 'Specified operator does not exist.' } );
       return;
     });
-    console.log(matchSkins);
     if(!matchSkins) return;
     res.status(200).json(matchSkins);
   } catch (err: any) {

@@ -1,6 +1,8 @@
 # RhodesAPI
 An API for the mobile gacha tower defense game Arknights hosted on Heroku made as a personal project. Requests data through querying from a MongoDB database which is filled with data scraped from each operator's page on Gamepress. When making a request to the API, a delay in response could be due to Heroku sleeping the application and it needing to be booted on.
 
+Add me in Arknights, Scramble#2904.
+
 ## Usage
 Use a HTTP client (IE: fetch, axios, requests)
 
