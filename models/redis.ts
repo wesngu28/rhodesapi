@@ -6,6 +6,7 @@ class Redis {
   public expirationDefault: number;
 
   constructor() {
+    console.log(`${process.env.REDIS_URL} is being loaded in here??`);
     if(process.env.REDIS_URL) {
       this.client = createClient({
         url: process.env.REDIS_URL,
