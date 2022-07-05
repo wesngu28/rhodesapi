@@ -8,7 +8,11 @@ class Redis {
   constructor() {
     if(process.env.REDIS_URL) {
       this.client = createClient({
-        url: process.env.REDIS_URL
+        url: process.env.REDIS_URL,
+        socket: {
+          tls: true,
+          rejectUnauthorized: false
+        }
         });
     } else {
       this.client = createClient({
