@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer';
+import { Page } from 'playwright-chromium';
 
 export const getStatistics = async (page: Page) => {
   const stats = [];

@@ -4,7 +4,7 @@ import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { sleep } from './sleep';
 import { operatorInterface } from '../models/operatorModel';
-import puppeteer from 'puppeteer';
+import { chromium } from 'playwright-chromium';
 
 export const getStaticInformation = async (url: string) => {
   try {
@@ -328,13 +328,12 @@ export const getStaticInformation = async (url: string) => {
 
     //Use puppeteer to interact with page (level costs and statistics).
     //Increases execution time of scraper by 30 seconds
-    const browser = await puppeteer.launch({
+    const browser = await chromium.launchPersistentContext('/puppet', {
       headless: true,
-      userDataDir: './puppet',
       args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
     });
     const page = await browser.newPage();
-    await page.setViewport({ width: 1920, height: 1080});
+    await page.setViewportSize({ width: 1920, height: 1080});
     await page.goto(url);
     await sleep(1000);
     const costs = await getCosts(page);

@@ -21,7 +21,8 @@
     "express": "^4.18.1",
     "fetch": "^1.1.0",
     "mongoose": "^6.3.4",
-    "puppeteer": "^14.1.2",
+    "node-fetch": "^2.6.7",
+    "playwright-chromium": "^1.23.1",
     "redis": "^4.1.1"
   },
   "devDependencies": {

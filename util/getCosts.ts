@@ -1,4 +1,4 @@
-import { Page } from "puppeteer";
+import { Page } from "playwright-chromium";
 import { load } from 'cheerio';
 import fetch from "node-fetch";
 

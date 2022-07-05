@@ -2,6 +2,7 @@ import fs from 'fs';
 import { neuralConnect } from './models/connect';
 import Operator, { operatorInterface } from './models/operatorModel';
 import dotenv from 'dotenv';
+
 dotenv.config();
 import { getStaticInformation } from './util/getStaticInformation';
 
@@ -15,7 +16,7 @@ async function scavenger() {
   console.log('Starting to scrape:');
   let operators = fs.readFileSync('operators.json','utf8')
   operators = JSON.parse(operators);
-  for(let i = 24; i < operators.length; i++) {
+  for(let i = 0; i < operators.length; i++) {
     console.log(`Currently scraping information for ${operators[i]}. ${i+1}/${operators.length}`)
     const findOperator = await Operator.findOne({
       _id: operators[i]
