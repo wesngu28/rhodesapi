@@ -5,6 +5,7 @@ import searchRouter from './routes/searchRoute';
 import skinRouter from './routes/skinRoute';
 import { neuralConnect } from './models/connect';
 import dotenv from 'dotenv';
+import { RedisClient } from './models/redis';
 dotenv.config();
 
 const app = express();
@@ -22,7 +23,7 @@ async function start() {
   app.use('*', (req, res) => {
     res.status(404).json( { error: "Resource not found"})
   })
-
+  await RedisClient.init();
   const PORT = process.env.PORT || 5219;
   app.listen(PORT, () => console.log(`Listening on ${PORT}!`));
 }
