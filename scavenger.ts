@@ -29,7 +29,7 @@ async function scavenger() {
       });
       if (findOperator && findOperator.checkDate()) {
         const updateInfo = await getStaticInformation(BASE_URL + operators[i]);
-        const updateOperator: operatorInterface = await Operator.replaceOne({
+        const updateOperator = await Operator.replaceOne({
           name: updateInfo.name
         }, {
           "name": updateInfo.name,
