@@ -32,7 +32,7 @@ export const getCosts = async (url: string) => {
   return costList;
 }
 
-function getItemsAndQuantity(masterList, itemList, qtyList) {
+function getItemsAndQuantity(masterList: {[key: string]: number }, itemList: any[], qtyList: any[]) {
   const costList = masterList;
   itemList.forEach((element, idx) => {
       const newElement = BASE + element.getAttribute('href');

@@ -16,18 +16,16 @@ export const getStatistics = async (url: string) => {
   const stats = [];
   for (const script of scripts) {
     if ((script).text.includes('myStats')) {
-      const above = script.text.indexOf('myStats')
-      const removals = script.text.substring(0, above + 11)
-      const below = script.text.indexOf('var summon_stats')
-      const secremovals = script.text.substring(below, script.text.length)
-      let removeSemiColons = script.text.replace(removals, '');
-      removeSemiColons = removeSemiColons.replace(secremovals, '')
-      removeSemiColons = removeSemiColons.substring(0, removeSemiColons.length - 3)
-      removeSemiColons = parse(removeSemiColons).rawText.replaceAll('\t', '')
-      removeSemiColons = removeSemiColons.replaceAll('"', '')
-      removeSemiColons = removeSemiColons.replaceAll(',', '')
-      let ne = removeSemiColons.substring(0, removeSemiColons.indexOf('}') + 1)
-      removeSemiColons = removeSemiColons.replace(ne, '')
+      const removals = script.text.substring(0, script.text.indexOf('myStats') + 11)
+      const secremovals = script.text.substring(script.text.indexOf('var summon_stats'), script.text.length)
+      let formattedText = script.text.replace(removals, '');
+      formattedText = formattedText.replace(secremovals, '')
+      formattedText = formattedText.substring(0, formattedText.length - 3)
+      formattedText = parse(formattedText).rawText.replaceAll('\t', '')
+      formattedText = formattedText.replaceAll('"', '')
+      formattedText = formattedText.replaceAll(',', '')
+      let ne = formattedText.substring(0, formattedText.indexOf('}') + 1)
+      formattedText = formattedText.replace(ne, '')
       const [, ...rest] = ne.split('\n')
       const statDict = {
         hp: rest[4].substring(rest[4].indexOf(' ') + 1, rest[4].length),
@@ -40,8 +38,8 @@ export const getStatistics = async (url: string) => {
         block: rest[7].substring(rest[7].indexOf(' ' + 1), rest[7].length)
       }
       stats.push(statDict)
-      let max = removeSemiColons.substring(0, removeSemiColons.indexOf('}') + 1)
-      removeSemiColons = removeSemiColons.replace(max, '')
+      let max = formattedText.substring(0, formattedText.indexOf('}') + 1)
+      formattedText = formattedText.replace(max, '')
       const [, ...rests] = max.split('\n')
       const maxDict = {
         hp: rests[2].substring(rests[2].indexOf(' ') + 1, rests[2].length),
@@ -50,13 +48,13 @@ export const getStatistics = async (url: string) => {
         block: rests[5].substring(rests[5].indexOf(' ') + 1, rests[5].length),
       }
       stats.push(maxDict)
-      removeSemiColons = removeSemiColons.substring(2, removeSemiColons.length)
-      if (removeSemiColons.includes('e1')) {
-        removeSemiColons = removeSemiColons.replace(removeSemiColons.substring(0, removeSemiColons.indexOf('Max')), '')
-        console.log(removeSemiColons)
-        let ne = removeSemiColons.substring(removeSemiColons.indexOf('Max') + 1, removeSemiColons.indexOf('}') + 1)
+      formattedText = formattedText.substring(2, formattedText.length)
+      if (formattedText.includes('e1')) {
+        formattedText = formattedText.replace(formattedText.substring(0, formattedText.indexOf('Max')), '')
+        console.log(formattedText)
+        let ne = formattedText.substring(formattedText.indexOf('Max') + 1, formattedText.indexOf('}') + 1)
         console.log(ne)
-        removeSemiColons = removeSemiColons.replace(ne, '')
+        formattedText = formattedText.replace(ne, '')
         const [, ...rest] = ne.split('\n')
         const statDict = {
           hp: rest[1].substring(rest[1].indexOf(' ') + 1, rest[1].length),
@@ -65,14 +63,14 @@ export const getStatistics = async (url: string) => {
           block: rest[4].substring(rest[4].indexOf(' ') + 1, rest[4].length),
         }
         stats.push(statDict)
-        removeSemiColons = removeSemiColons.substring(1, removeSemiColons.length)
+        formattedText = formattedText.substring(1, formattedText.length)
       }
-      if (removeSemiColons.includes('e2')) {
-        removeSemiColons = removeSemiColons.replace(removeSemiColons.substring(0, removeSemiColons.indexOf('Max')), '')
-        console.log(removeSemiColons)
-        let ne = removeSemiColons.substring(removeSemiColons.indexOf('Max') + 1, removeSemiColons.indexOf('}') + 1)
+      if (formattedText.includes('e2')) {
+        formattedText = formattedText.replace(formattedText.substring(0, formattedText.indexOf('Max')), '')
+        console.log(formattedText)
+        let ne = formattedText.substring(formattedText.indexOf('Max') + 1, formattedText.indexOf('}') + 1)
         console.log(ne)
-        removeSemiColons = removeSemiColons.replace(ne, '')
+        formattedText = formattedText.replace(ne, '')
         const [, ...rest] = ne.split('\n')
         const statDict = {
           hp: rest[1].substring(rest[1].indexOf(' ') + 1, rest[1].length),
@@ -81,7 +79,7 @@ export const getStatistics = async (url: string) => {
           block: rest[4].substring(rest[4].indexOf(' ') + 1, rest[4].length),
         }
         stats.push(statDict)
-        removeSemiColons = removeSemiColons.substring(1, removeSemiColons.length)
+        formattedText = formattedText.substring(1, formattedText.length)
       }
     }
   }
