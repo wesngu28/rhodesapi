@@ -328,7 +328,8 @@ export const getStaticInformation = async (url: string) => {
 
     //Use puppeteer to interact with page (level costs and statistics).
     //Increases execution time of scraper by 30 seconds
-    const browser = await chromium.launchPersistentContext('/puppet', {
+    const cwd = process.cwd()
+    const browser = await chromium.launchPersistentContext(cwd, {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
     });

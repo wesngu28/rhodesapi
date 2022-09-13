@@ -51,7 +51,8 @@ export const createOperator = async (req: Request, res: Response) => {
       res.status(400).json( { error: 'Operator already exists!' } );
     }
     const operatorList = await requester();
-    if(operatorList.includes(name)) {
+    const formatName = name.charAt(0).toUpperCase() + name.slice(1);
+    if(operatorList.includes(formatName)) {
       const createOperator = await getStaticInformation(BASE_URL + name);
       await Operator.create(createOperator);
       res.status(200).json(createOperator);
