@@ -15,10 +15,10 @@ start();
 async function start() {
   await neuralConnect();
 
-  app.use('/api/rhodes/operator', operatorRouter);
-  app.use('/api/rhodes/search', searchRouter);
-  app.use('/api/rhodes/skins', skinRouter);
-  app.use('/api/rhodes/recruit', recruitmentRouter);
+  app.use('/api/operator', operatorRouter);
+  app.use('/api/search', searchRouter);
+  app.use('/api/skins', skinRouter);
+  app.use('/api/recruit', recruitmentRouter);
 
   app.use('*', (req, res) => {
     res.status(404).json( { error: "Resource not found"})
