@@ -71,7 +71,7 @@ export const updateOperator = async (req: Request, res: Response) => {
     });
     if (findOperator && findOperator.checkDate()) {
       const updateInfo = await getStaticInformation(BASE_URL + name);
-      const updateOperator: operatorInterface = await Operator.replaceOne({
+      const updateOperator = await Operator.replaceOne({
         name: updateInfo.name
       }, {
         "name": updateInfo.name,
