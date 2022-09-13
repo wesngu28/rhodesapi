@@ -1,7 +1,5 @@
 # RhodesAPI
 
-Note: Heroku is changing their pricing so this will go down with the ship until I find/want to find somewhere else to host it.
-
 An API for the mobile gacha tower defense game Arknights hosted on Heroku made as a personal project. Requests data through querying from a MongoDB database which is filled with data scraped from each operator's page on Gamepress. When making a request to the API, a delay in response could be due to Heroku sleeping the application and it needing to be booted on.
 
 Add me in Arknights, Scramble#2904.
@@ -12,16 +10,14 @@ Use a HTTP client (IE: fetch, axios, requests)
 ### Base API URL
 >https://rhodesapi.herokuapp.com/api/rhodes/
 
-### Endpoints
+### Operator Endpoints
+| Method  | Endpoint                                                  | Description/Sample                                            |
+|:-----:|:--------------------------------------------------------:|:---------------------------------------------------------------- |
+| GET   | https://rhodesapi.herokuapp.com/api/rhodes/operator      | Get all operators and their associated information.              |
+| GET   | https://rhodesapi.herokuapp.com/api/rhodes/operator/:name| Get a singular operator and their associated information.        |
+| POST  | https://rhodesapi.herokuapp/com/api/rhodes/operator/:name| Add a specified operator to the database. Before adding, the api will check whether or not Gamepress has information on the specified operator and if it exists already. Created operator is returned in the response if successful. At the moment the operator must be in operators.json but this may be changed in the future to just check the gamepress directly through html parsing.         |
+| PUT   | https://rhodesapi.herokuapp.com/api/rhodes/operator/     | Update a speciifed operator to the database. In order to account for game updates, this is only callable on operator's in which the dateAdded field is a week out (which will be all since all were scraped in the same day). This may be still be too soon as most operators are untouched for months on end (at least until recent module updates).                 |
 
-#### /operator/
->GET: https://rhodesapi.herokuapp.com/api/rhodes/operator/
-
-Get all operators and their associated information.
-
->GET: https://rhodesapi.herokuapp.com/api/rhodes/operator/:name
-
-Get a singular operator and their associated information.
 <details>
   <summary>
     Sample of request querying Surtr
@@ -296,19 +292,12 @@ Get a singular operator and their associated information.
 ```
 </details>
 
->POST: https://rhodesapi.herokuapp.com/api/rhodes/operator/:name
+### Skin Endpoints
+| Method  | Endpoint                                                  | Description/Sample                                            |
+|:-----:|:--------------------------------------------------------:|:---------------------------------------------------------------- |
+| GET   | https://rhodesapi.herokuapp.com/api/rhodes/skins/e2/:name| Get the e2 art of the specified operator, if they have one.      |
+| GET   | https://rhodesapi.herokuapp.com/api/rhodes/skins/:name| Get the skins of the specified operator, if they have skins.        |
 
-Add a specified operator to the database. Before adding, the api will check whether or not Gamepress has information on the specified operator and if it exists already. Created operator is returned in the response if successful.
-
->PUT: https://rhodesapi.herokuapp.com/api/rhodes/operator/
-
-Update a speciifed operator to the database. In order to account for game updates, this is only callable on operator's in which the dateAdded field is a week out (which will be all since all were scraped in the same day). This may be still be too soon as most operators are untouched for months on end (at least until recent module updates).
-
-#### /skins/
-
->GET: https://rhodesapi.herokuapp.com/api/rhodes/skins/e2/:name
-
-Get the e2 artwork of the specified operator, if they have one.
 <details>
   <summary>
     Sample of request querying for Surtr's e2 art.
@@ -320,9 +309,7 @@ Get the e2 artwork of the specified operator, if they have one.
 }
 ```
 </details>
->GET: https://rhodesapi.herokuapp.com/api/rhodes/skins/:name
 
-Get the skins of the specified operator, if they have skins.
 <details>
   <summary>
     Sample of request querying for Surtr's skins.
@@ -336,10 +323,8 @@ Get the skins of the specified operator, if they have skins.
 </details>
 
 #### /search/
-Search operators based on provided query parameters. Supported parameters are:
+Search operators based on provided query parameters. Non-case sensitive queries, just specify the corresponding value you seek for these. For names with hyphens, hyphens can be provided in the request body but spaces are also supported. Supported parameters are:
 >_id, name, rarity, artist, va, affiliation, class, tag, headhunting, recruitable, availability, gender, race
-
-Non-case sensitive queries, just specify the corresponding value you seek for these. For names with hyphens, hyphens can be provided in the request body but spaces are also supported.
 
 >alter, module
 
