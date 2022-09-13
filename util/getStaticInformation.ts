@@ -4,7 +4,6 @@ import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { sleep } from './sleep';
 import { operatorInterface } from '../models/operatorModel';
-import { chromium } from 'playwright-chromium';
 
 export const getStaticInformation = async (url: string) => {
   try {
@@ -326,20 +325,8 @@ export const getStaticInformation = async (url: string) => {
       }
     }
 
-    //Use puppeteer to interact with page (level costs and statistics).
-    //Increases execution time of scraper by 30 seconds
-    const cwd = process.cwd()
-    const browser = await chromium.launchPersistentContext(cwd, {
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
-    });
-    const page = await browser.newPage();
-    await page.setViewportSize({ width: 1920, height: 1080});
-    await page.goto(url);
-    await sleep(1000);
-    const costs = await getCosts(page);
-    const statistics = await getStatistics(page);
-    await browser.close();
+    const costs = await getCosts(url);
+    const statistics = await getStatistics(url);
 
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
     const dict: operatorInterface = {

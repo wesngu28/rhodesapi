@@ -51,9 +51,9 @@ export interface operatorInterface {
   affiliation: Array<string>;
   class: Array<string>;
   tags: Array<string>;
-  statistics: {base: stats, e0max: stats, e1max: stats, e2max: stats};
+  statistics: {base: { [key: string]: string }, e0max: { [key: string]: string }, e1max?: { [key: string]: string }, e2max?: { [key: string]: string }};
   trait: string;
-  costs: {[key: string]: string};
+  costs: {[key: string]: number};
   potential: Array<{name: string, value: string;}>;
   trust: { [key: string]: string };
   talents: Array<{name: string, value: string;}>;
