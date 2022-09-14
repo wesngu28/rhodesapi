@@ -1,6 +1,10 @@
 # RhodesAPI
 
-An API for the mobile gacha tower defense game Arknights hosted on Heroku made as a personal project. Requests data through querying from a MongoDB database which is filled with data scraped from each operator's page on Gamepress. When making a request to the API, a delay in response could be due to Heroku sleeping the application and it needing to be booted on.
+An API for the mobile gacha tower defense game Arknights hosted on Heroku made as a personal project. 
+
+Requests data through querying from a MongoDB database which is filled with data scraped from each operator's page on Gamepress. Responses are cached in a Redis database hosted on Redis Enterprise.
+
+Was hosted on Heroku but am currently testing Cyclic.sh as Heroku is getting rid of free tier.
 
 Add me in Arknights, Scramble#2904.
 
@@ -8,15 +12,15 @@ Add me in Arknights, Scramble#2904.
 Use a HTTP client (IE: fetch, axios, requests)
 
 ### Base API URL
->https://rhodesapi.herokuapp.com/api/rhodes/
+>https://rhodesapi.cyclic.app/api/
 
 ### Operator Endpoints
 | Method  | Endpoint                                                  | Description/Sample                                            |
 |:-----:|:--------------------------------------------------------:|:---------------------------------------------------------------- |
-| GET   | https://rhodesapi.herokuapp.com/api/rhodes/operator      | Get all operators and their associated information.              |
-| GET   | https://rhodesapi.herokuapp.com/api/rhodes/operator/:name| Get a singular operator and their associated information.        |
+| GET   | https://rhodesapi.cyclic.app/api/operator      | Get all operators and their associated information.              |
+| GET   | https://rhodesapi.cyclic.app/api/operator/:name| Get a singular operator and their associated information.        |
 | POST  | https://rhodesapi.herokuapp/com/api/rhodes/operator/:name| Add a specified operator to the database. Before adding, the api will check whether or not Gamepress has information on the specified operator and if it exists already. Created operator is returned in the response if successful. At the moment the operator must be in operators.json but this may be changed in the future to just check the gamepress directly through html parsing.         |
-| PUT   | https://rhodesapi.herokuapp.com/api/rhodes/operator/     | Update a speciifed operator to the database. In order to account for game updates, this is only callable on operator's in which the dateAdded field is a week out (which will be all since all were scraped in the same day). This may be still be too soon as most operators are untouched for months on end (at least until recent module updates).                 |
+| PUT   | https://rhodesapi.cyclic.app/api/operator/     | Update a speciifed operator to the database. In order to account for game updates, this is only callable on operator's in which the dateAdded field is a week out (which will be all since all were scraped in the same day). This may be still be too soon as most operators are untouched for months on end (at least until recent module updates).                 |
 
 <details>
   <summary>
@@ -295,8 +299,8 @@ Use a HTTP client (IE: fetch, axios, requests)
 ### Skin Endpoints
 | Method  | Endpoint                                                  | Description/Sample                                            |
 |:-----:|:--------------------------------------------------------:|:---------------------------------------------------------------- |
-| GET   | https://rhodesapi.herokuapp.com/api/rhodes/skins/e2/:name| Get the e2 art of the specified operator, if they have one.      |
-| GET   | https://rhodesapi.herokuapp.com/api/rhodes/skins/:name| Get the skins of the specified operator, if they have skins.        |
+| GET   | https://rhodesapi.cyclic.app/api/skins/e2/:name| Get the e2 art of the specified operator, if they have one.      |
+| GET   | https://rhodesapi.cyclic.app/api/skins/:name| Get the skins of the specified operator, if they have skins.        |
 
 <details>
   <summary>
@@ -322,7 +326,9 @@ Use a HTTP client (IE: fetch, axios, requests)
 ```
 </details>
 
-#### /search/
+### Search Endpoints
+>https://rhodesapi.cyclic.app/api/search?
+
 Search operators based on provided query parameters. Non-case sensitive queries, just specify the corresponding value you seek for these. For names with hyphens, hyphens can be provided in the request body but spaces are also supported. Supported parameters are:
 >_id, name, rarity, artist, va, affiliation, class, tag, headhunting, recruitable, availability, gender, race
 
@@ -340,7 +346,7 @@ Do not specify a value for these queries as they will return operator's with alt
   </summary>
 
 ```javascript
-  https://rhodesapi.herokuapp.com/api/rhodes/search?race=sarkaz&class=guard&tags=dps
+  https://rhodesapi.cyclic.app/api/search?race=sarkaz&class=guard&tags=dps
 
 [
   {
@@ -1051,7 +1057,7 @@ Do not specify a value for these queries as they will return operator's with alt
 </details>
 
 #### /recruit/
->GET: https://rhodesapi.herokuapp.com/api/rhodes/recruit/:tagone/:tagtwo?:tagthree?
+>GET: https://rhodesapi.cyclic.app/api/recruit/:tagone/:tagtwo?:tagthree?
 
 Similar to the search query but supports only up to three tags. Returns matching operators with the provided tags and are recruitable to simulate the game's recruit system.
 
@@ -1062,7 +1068,7 @@ Similar to the search query but supports only up to three tags. Returns matching
 
 ```javascript
 [
-  https://rhodesapi.herokuapp.com/api/rhodes/recruit/guard/dps/nuker/
+  https://rhodesapi.cyclic.app/api/recruit/guard/dps/nuker/
   {
     "_id": "Chen",
     "name": "Ch'en",
@@ -1331,8 +1337,6 @@ This is a personal project made to both learn how to make an API and get familia
 
 The scraper and operator.json updater does not run on a set interval due to the sheer length of time it takes to scrape 200+ operators with built in delays. I chose to include user-based updates based on certain conditions (new operators, operator information going past a certain date) but most likely I will asynchronously update the database manually.
 
-With this project I began to become more comfortable using TypeScript, as well as using MongoDB for a large amount of data and caching that data with Redis to speed up the queries, especially seeing as the api is remotely hosted on Heroku. I also was given exposure to both using Docker and Docker Compose for local development.
+With this project I began to become more comfortable using TypeScript, as well as using MongoDB for a large amount of data and caching that data with Redis to speed up the queries, especially seeing as the api is remotely hosted on Heroku/Cyclic. I also was given exposure to both using Docker and Docker Compose for local development.
 
-If possible I would have loved to host this somewhere with a better plan than free on Heroku as some problems I have are the cold start, not being able to use the docker-compose, and the lack of a static IP (I looked into the extensions).
-
-Used Technologies: Visual Studio Code, Javascript, Typescript, Node.JS, Express, MongoDB (Mongoose, Compass, Atlas), Redis, Heroku, Playwright, Cheerio, Docker
+Used Technologies: Visual Studio Code, Javascript, Typescript, Node.JS, Express, MongoDB (Mongoose, Compass, Atlas), Redis, Heroku/Cyclic, Playwright (formerly), Cheerio, Docker
