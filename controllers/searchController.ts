@@ -77,7 +77,13 @@ export const searchOperators = async (req: Request, res: Response) => {
         }
       }
     });
-    const matchOperators = await getOrSetToCache(`search?queries=${queries}`, async ()=> {
+    let build: string = '';
+    Object.keys(queries).forEach((key, idx) => {
+      const valueArr = Object.values(queries)
+      const value: string = (valueArr[idx] as string)
+      build = build + `${key}=${value!.toLowerCase()}`
+    });
+    const matchOperators = await getOrSetToCache(`search?queries=${build}`, async ()=> {
       const findOperator = await Operator.find(
         queries
       );
