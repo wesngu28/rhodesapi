@@ -20,13 +20,12 @@ async function start() {
   app.use('/api/search', searchRouter);
   app.use('/api/skins', skinRouter);
   app.use('/api/recruit', recruitmentRouter);
+  app.use(cors())
 
   app.use('*', (req, res) => {
     res.status(404).json( { error: "Resource not found"})
   })
   await RedisClient.init();
   const PORT = process.env.PORT || 5219;
-
-  app.use(cors())
   app.listen(PORT, () => console.log(`Listening on ${PORT}!`));
 }
