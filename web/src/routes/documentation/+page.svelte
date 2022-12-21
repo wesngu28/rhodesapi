@@ -1,13 +1,16 @@
 <script lang="ts">
+	import Docuroute from '../../components/Docuroute.svelte';
 	import { onMount } from 'svelte'
-	function scrollTo(this: HTMLElement) {
-		const scroll = document.getElementById(this.textContent!)!
-		scroll.scrollIntoView()
-	}
 	let surtr = {};
+	let search = {};
+	let recruit = {};
 	onMount(async () => {
 		const response = await fetch('https://raw.githubusercontent.com/wesngu28/rhodesapi/docusite/web/src/stores/default.json');
+		const response2 = await fetch('https://raw.githubusercontent.com/wesngu28/rhodesapi/docusite/web/src/routes/documentation/search.json');
+		const response3 = await fetch('https://raw.githubusercontent.com/wesngu28/rhodesapi/docusite/web/src/routes/documentation/recruit.json');
 		surtr = await response.json();
+		search = await response2.json();
+		recruit = await response3.json();
 	});
 </script>
 
@@ -15,79 +18,25 @@
 	<div class="route-holder">
 		<h1>API Routes</h1>
 		<h2 id="Get">GET</h2>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/operator
-			</p>
-			<p>Get a list of all operators and their associated information.</p>
-		</div>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/operator/:name
-			</p>
-			<p>Get a singular operator and their associated information.</p>
-		</div>
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/operator'} text={'Get a list of all operators and their associated information.'} />
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/operator/:name'} text={'Get a singular operator and their associated information.'} />
 		<pre>{JSON.stringify(surtr, null, 2)}</pre>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/skins/e2/:name
-			</p>
-			<p>Get the e2 art of the specified operator, if they have one.</p>
-		</div>
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/skins/e2/:name'} text={'Get the e2 art of the specified operator, if they have one.'} />
 		<pre>{JSON.stringify({
 			"e2": "https://gamepress.gghttps://gamepress.gg/arknights/sites/arknights/files/2020-09/char_350_surtr_2.png"
 		}, null, 2)}</pre>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/skins/:name
-			</p>
-			<p>Get the skins of the specified operator, if they have one.</p>
-		</div>
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/skins/:name'} text={'Get the skins of the specified operator, if they have one.'} />
 		<pre>{JSON.stringify({
 			"Liberté//Échec": "https://gamepress.gg/arknights/sites/arknights/files/2021-06/char_350_surtr_it%231.png"
 		}, null, 2)}</pre>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/search?
-			</p>
-			<p>Search operators based on provided query parameters. Non-case sensitive queries, just specify the corresponding value you seek for these.
-				For names with hyphens, hyphens can be provided in the request body but spaces are also supported. Supported parameters are:</p>
-			<p>_id, name, rarity, artist, va, affiliation, class, tag, headhunting, recruitable, availability, gender, race, alter (no specified value), module
-				(no specified value)
-			</p>
-			<ul>
-				<li>base skill's building => search?building=factory</li>
-				<li>place of birth => search?birth=ursus</li>
-			</ul>
-		</div>
-		<pre>{JSON.stringify({
-			"Liberté//Échec": "https://gamepress.gg/arknights/sites/arknights/files/2021-06/char_350_surtr_it%231.png"
-		}, null, 2)}</pre>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/recruit/:tagone/:tagtwo?:tagthree?
-			</p>
-			<p>Similar to the search query but supports only up to three tags. Returns matching operators with the provided tags and are recruitable to simulate the game's recruit system.</p>
-		</div>
-		<pre>{JSON.stringify({
-			"Liberté//Échec": "https://gamepress.gg/arknights/sites/arknights/files/2021-06/char_350_surtr_it%231.png"
-		}, null, 2)}</pre>
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/search?'} text={'Search operators based on provided query parameters. Non-case sensitive, for names with hyphens, hyphens can be provided in the request body but spaces are also supported.'} />
+		<pre>{JSON.stringify(search, null, 2)}</pre>
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/recruit/:tagone/:tagtwo?:tagthree?'} text={'Similar to the search query but supports only up to three tags. Returns matching operators with the provided tags and are recruitable to simulate the game\'s recruit system.'} />
+		<pre>{JSON.stringify(recruit, null, 2)}</pre>
 		<h2 id="Post">POST</h2>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/operator/:name
-			</p>
-			<p>Add a specified operator to the database.</p>
-		</div>
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/operator/:name'} text={'Add a specified operator to the database.'} />
 		<h2 id="Put">PUT</h2>
-		<div>
-			<p class="route">
-				https://rhodesapi.cyclic.app/api/operator/:name
-			</p>
-			<p>Update a speciifed operator to the database. In order to account for game updates, this is only callable on operator's in which the
-				dateAdded field is a week out (which will be all since all were scraped in the same day).
-			</p>
-		</div>
+		<Docuroute route={'https://rhodesapi.cyclic.app/api/operator/:name'} text={'Update a speciifed operator in the database. In order to account for game updates, this is only callable on operator\'s in which thedateAdded field is a week out.'} />
 	</div>
 </div>
 
@@ -116,20 +65,9 @@
 		text-align: left;
 	}
 
-  p {
-    line-height: 1.5;
-  }
-
 	.route {
 		font-family: 'Courier New', Courier, monospace;
 	}
-
-	.route-holder div {
-		background-color: rgb(57, 59, 59);
-		padding: 1rem;
-		margin-top: 3rem;
-	}
-
   pre {
     width: 48rem;
     max-height: 48rem;
