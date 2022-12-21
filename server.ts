@@ -27,6 +27,6 @@ async function start() {
   await RedisClient.init();
   const PORT = process.env.PORT || 5219;
 
-  app.use(cors)
+  app.use(cors({origin: '*'}));
   app.listen(PORT, () => console.log(`Listening on ${PORT}!`));
 }
