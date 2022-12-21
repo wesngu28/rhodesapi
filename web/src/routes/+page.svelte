@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Pokemon Stats Viewer</title>
+	<title>RhodesAPI</title>
 </svelte:head>
 
 <div class="wrapper">

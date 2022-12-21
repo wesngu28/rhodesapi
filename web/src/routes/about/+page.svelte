@@ -2,7 +2,7 @@
 </script>
 
 <svelte:head>
-	<title>Pokemon Stats Viewer</title>
+	<title>About - RhodesAPI</title>
 </svelte:head>
 
 <div class="wrapper">

@@ -20,6 +20,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Docs - RhodesAPI</title>
+</svelte:head>
+
 <div class="wrapper">
 	<div class="route-holder">
 		<h1>API Routes</h1>
