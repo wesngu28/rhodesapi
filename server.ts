@@ -16,11 +16,12 @@ start();
 async function start() {
   await neuralConnect();
 
+  app.use(cors())
+
   app.use('/api/operator', operatorRouter);
   app.use('/api/search', searchRouter);
   app.use('/api/skins', skinRouter);
   app.use('/api/recruit', recruitmentRouter);
-  app.use(cors())
 
   app.use('*', (req, res) => {
     res.status(404).json( { error: "Resource not found"})
