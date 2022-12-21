@@ -1,29 +1,47 @@
 <script lang="ts">
-  import { currentDropdownSelection, api } from '../stores/stores.js';
+  import { currentDropdownSelection, api, currResponse } from '../stores/stores.js';
   let selected = true
+  let method = 'GET'
+  let json: {[key: string]: any} = {};
+	currResponse.subscribe((value) => {
+		json = value;
+	});
   function setDropdownSelection(this: HTMLButtonElement) {
     if(this.textContent! === 'Operator Info') {
+      currResponse.set({})
       currentDropdownSelection.set('/operator/')
+      method = 'GET'
+      api.set('GET')
     }
     if(this.textContent! === 'Operator Skin') {
+      currResponse.set({})
       currentDropdownSelection.set('/skins/')
+      method = 'GET'
+      api.set('GET')
     }
     if(this.textContent! === 'Operator E2') {
+      currResponse.set({})
       currentDropdownSelection.set('/skins/e2/')
+      method = 'GET'
+      api.set('GET')
     }
     if(this.textContent! === 'Add Operator') {
+      currResponse.set({})
       currentDropdownSelection.set('/operator/')
-      api.set('push')
+      method = 'POST'
+      api.set('POST')
     }
     if(this.textContent! === 'Update Operator') {
+      currResponse.set({})
       currentDropdownSelection.set('/operator/')
-      api.set('put')
+      method = 'PUT'
+      api.set('PUT')
     }
   }
 </script>
 
 <div class="dropdown">
-  <button class="first-button" on:click={() => selected = !selected}>GET</button>
+  <button class="first-button" on:click={() => selected = !selected}>{method}</button>
   <div class="{selected ? 'dropdown-content hidden' : 'dropdown-content'}">
     <button on:click="{setDropdownSelection}">Operator Info</button>
     <button on:click="{setDropdownSelection}">Operator Skin</button>
