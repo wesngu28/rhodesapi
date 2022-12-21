@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Route from "../components/route.svelte";
-	import Dropdown from "../components/dropdown.svelte";
-	import Input from "../components/input.svelte";
-	import PreOutput from "../components/preOutput.svelte";
+	import Route from '../components/route.svelte';
+	import Dropdown from '../components/dropdown.svelte';
+	import Input from '../components/input.svelte';
+	import PreOutput from '../components/preOutput.svelte';
 </script>
 
 <svelte:head>
@@ -51,9 +51,9 @@
 	}
 
 	@media (max-width: 550px) {
-    .form {
+		.form {
 			justify-content: center;
 			width: 75vw;
 		}
-  }
+	}
 </style>

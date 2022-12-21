@@ -1,25 +1,25 @@
 <script lang="ts">
-	import { currentDropdownSelection, api, currResponse, operatorName } from "../stores/stores";
-  let search = '';
-  let curr = ''
-	let method = ''
-  currentDropdownSelection.subscribe(value => {
+	import { currentDropdownSelection, api, currResponse, operatorName } from '../stores/stores';
+	let search = '';
+	let curr = '';
+	let method = '';
+	currentDropdownSelection.subscribe((value) => {
 		curr = value;
-		search = ''
+		search = '';
 	});
 	api.subscribe((value) => {
 		method = value;
 	});
-  const handleKeydown = async (event: KeyboardEvent) => {
+	const handleKeydown = async (event: KeyboardEvent) => {
 		if (search) {
 			if (event.key === 'Enter') {
-        const response = await fetch(`https://rhodesapi.cyclic.app/api${curr}${search}`, {
+				const response = await fetch(`https://rhodesapi.cyclic.app/api${curr}${search}`, {
 					method: method,
-          mode: 'cors',
-        });
-        const json = await response.json();
-				currResponse.set(json)
-				operatorName.set(search)
+					mode: 'cors'
+				});
+				const json = await response.json();
+				currResponse.set(json);
+				operatorName.set(search);
 			}
 		}
 	};
@@ -30,13 +30,13 @@
 <input type="text" bind:value={search} />
 
 <style>
-  input {
+	input {
 		width: 25vw;
 		padding: 0.75rem;
 	}
 	@media (max-width: 550px) {
-    input {
+		input {
 			width: 75vw;
-    }
-  }
+		}
+	}
 </style>
