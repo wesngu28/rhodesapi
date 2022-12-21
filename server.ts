@@ -6,6 +6,7 @@ import skinRouter from './routes/skinRoute';
 import { neuralConnect } from './models/connect';
 import dotenv from 'dotenv';
 import { RedisClient } from './models/redis';
+import cors from 'cors'
 dotenv.config();
 
 const app = express();
@@ -25,5 +26,7 @@ async function start() {
   })
   await RedisClient.init();
   const PORT = process.env.PORT || 5219;
+
+  app.use(cors)
   app.listen(PORT, () => console.log(`Listening on ${PORT}!`));
 }
