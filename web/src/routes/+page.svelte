@@ -27,6 +27,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		overflow-x: hidden;
 	}
 
 	h1 {
@@ -44,5 +45,6 @@
 
 	.form {
 		display: flex;
+		margin-bottom: 1rem;
 	}
 </style>
