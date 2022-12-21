@@ -1,0 +1,261 @@
+[
+  {
+    "_id": "Chen",
+    "name": "Ch'en",
+    "rarity": 6,
+    "alter": "Ch'en the Holungday",
+    "artist": "Wéi@W",
+    "va": "Shizuka Ishigami",
+    "biography": "Ch'en, head of the Lungmen Guard Department's Special Inspection Unit, graduated from the Royal Victorian Guard School with superb grades and outstanding achievements. During her time with the Department, she cracked down on crime, fought violent offenders, tracked down armed fugitives, and brought down international criminals. Now works at Rhodes Island, providing on-site tactical command.",
+    "description": "Ch'en, Special Inspection Unit Chief, L.G.D., is cooperating with Rhodes Island to fulfill the obligations outlined in her contract.",
+    "quote": "She's terrifying when she's mad, but you don't want to mess with her even when she's not.",
+    "voicelines": {
+      "Appointed as Assistant": "Doctor, your safety will be my responsibility from now on.",
+      "Talk 1": "I've always had my suspicions about Rhodes Island. Still do.",
+      "Talk 2": "Why are you staring at me? Nothing better to do?",
+      "Talk 3": "Hah!",
+      "Talk after Promotion 1": "I know every nook and cranny of Lungmen. The docks, the neon signs, the winding paths, I can see them all clear as day in my mind. I'll never forget them.",
+      "Talk after Promotion 2": "Things have been deteriorating around here lately. I'll be on guard, but I still don't want you doing anything stupid.",
+      "Talk after Trust Increase 1": "Maybe one day my efforts will be appreciated, but until then...",
+      "Talk after Trust Increase 2": "Amiya trusts you completely. When I see you two together, it makes me wonder, what if I had someone like that by my side...",
+      "Talk after Trust Increase 3": "I've... I've never been able to put that much faith in anyone, not even...",
+      "Idle": "Doctor? You fell asleep? Hmph. How careless.",
+      "Onboard": "I am the leader of L.G.D.'s Special Inspector Group, Ch'en. I have my own reasons, but I'll be joining you for a while. Seeing as we're already well acquainted from our prior work together, I'll ask you to take me to the office now.",
+      "Watching Battle Record": "It's all in the service of more efficient operations.",
+      "Promotion 1": "Another promotion? I'm used to it by now.",
+      "Promotion 2": "Roger. Just give me all the missions your usual Operators can't handle.",
+      "Added to Squad": "No problem.",
+      "Appointed as Squad Leader": "Listen up! We'll be much more efficient if we work together.",
+      "Depart": "Everyone! Prepare for battle!",
+      "Begin Operation": "Ready? Stick to the plan.",
+      "Selecting Operator 1": "This is Ch'en.",
+      "Selecting Operator 2": "Ready to move.",
+      "Deployment 1": "Moving out!",
+      "Deployment 2": "Take them out fast.",
+      "In Battle 1": "Slash!",
+      "In Battle 2": "Flash!",
+      "In Battle 3": "Drop your weapon!",
+      "In Battle 4": "Show some respect!",
+      "4-star Result": "Such evil must be stopped, and by any means necessary.",
+      "3-star Result": "You have the courage to challenge me? I have to wonder why.",
+      "Sub 3-star Result": "The wounded wait here for a medivac. The rest of you Operators, stay on guard.",
+      "Operation Failure": "Tactical retreat. Don't break formation!",
+      "Assigned to Facility": "So these are Rhodes Island's internal operations? Bigger than I expected.",
+      "Tap": "Hey! What are you doing!",
+      "Trust Tap": "Doctor, you're in a good mood. Is it because that operation went well? Me too. How about that.",
+      "Title": "Arknights.",
+      "Greeting": "Oh, it's you, Doctor."
+    },
+    "lore": {
+      "Gender": "Female",
+      "Place of Birth": "Lungmen",
+      "Birthday": "Jul. 7",
+      "Race": "Lung",
+      "Height": "168cm",
+      "Combat Experience": "4 years",
+      "Infection Status": "Unknown.",
+      "Physical Strength": "Excellent",
+      "Mobility": "Standard",
+      "Physiological Endurance": "Excellent",
+      "Tactical Planning": "Excellent",
+      "Combat Skill": "Outstanding",
+      "Originium Adaptability": "Standard"
+    },
+    "affiliation": [
+      "Great Lungmen",
+      "L.G.D."
+    ],
+    "class": [
+      "Guard",
+      "Dualstrike",
+      "Swordmaster"
+    ],
+    "tags": [
+      "Nuker",
+      "DPS",
+      "Guard"
+    ],
+    "statistics": {
+      "base": {
+        "hp": "1229",
+        "atk": "249",
+        "def": "154",
+        "resist": "0",
+        "redeploy": "70",
+        "cost": "19",
+        "block": "2",
+        "interval": "1.3"
+      },
+      "e0max": {
+        "hp": "1684",
+        "atk": "361",
+        "def": "221",
+        "resist": "0",
+        "redeploy": "70",
+        "cost": "19",
+        "block": "2",
+        "interval": "1.3"
+      },
+      "e1max": {
+        "hp": "2188",
+        "atk": "469",
+        "def": "288",
+        "resist": "0",
+        "redeploy": "70",
+        "cost": "21",
+        "block": "2",
+        "interval": "1.3"
+      },
+      "e2max": {
+        "hp": "2880",
+        "atk": "610",
+        "def": "352",
+        "resist": "0",
+        "redeploy": "70",
+        "cost": "23",
+        "block": "2",
+        "interval": "1.3"
+      }
+    },
+    "trait": "Normal attacks deal damage twice",
+    "costs": {
+      "Skill Summary - 1": "10",
+      "Orirock": "6",
+      "Damaged Device": "4",
+      "Skill Summary - 2": "24",
+      "Sugar": "5",
+      "Polyester": "4",
+      "Oriron": "4",
+      "Integrated Device": "8",
+      "Skill Summary - 3": "113",
+      "Loxic Kohl": "12",
+      "Aketon": "4",
+      "Manganese Trihydrate": "4",
+      "Orirock Concentration": "4",
+      "Grindstone Pentahydrate": "13",
+      "Polymerization Preparation": "10",
+      "White Horse Kohl": "13",
+      "Sugar Lump": "8",
+      "RMA70-24": "20",
+      "D32 Steel": "12",
+      "Polyester Lump": "6",
+      "Manganese Ore": "5",
+      "Oriron Block": "5",
+      "LMD": "210000",
+      "Guard Chip": "5",
+      "Orirock Cube": "12",
+      "Device": "3",
+      "Guard Dualchip": "4"
+    },
+    "potential": [
+      {
+        "name": "Deployment Cost",
+        "value": "-1"
+      },
+      {
+        "name": "Redeployment Cooldown",
+        "value": "-4"
+      },
+      {
+        "name": "Attack Power",
+        "value": "+23"
+      },
+      {
+        "name": "Improves Second Talent",
+        "value": "Not provided"
+      },
+      {
+        "name": "Deployment Cost",
+        "value": "-1"
+      }
+    ],
+    "trust": {
+      "Attack Power": "+50",
+      "Defense": "+50"
+    },
+    "talents": [
+      {
+        "name": "Scolding",
+        "value": "Every 5 seconds when deployed, restores 1 Skill Point to all deployed allies that have an ATK Recovery or DEF Recovery skill."
+      },
+      {
+        "name": "Scolding",
+        "value": "Every 4 seconds when deployed, restores 1 Skill Point to all deployed allies that have an ATK Recovery or DEF Recovery skill."
+      },
+      {
+        "name": "Blade Art",
+        "value": "ATK +5%; DEF +5%; Physical Dodge +10%"
+      },
+      {
+        "name": "Blade Art",
+        "value": "ATK +6% (+1%); DEF +6% (+1%); Physical Dodge +13% (+3%)"
+      }
+    ],
+    "skills": [
+      {
+        "name": "Sheathed Strike",
+        "spcost": "7-4",
+        "initialSP": "0-0",
+        "chargeType": "Attacking Enemy",
+        "skillActivation": "Auto Trigger",
+        "skillDescription": "On the next attack, strike the enemy using the sheath, dealing 200%-320% ATK as Physical damage and Stun them for 1-1.5 seconds"
+      },
+      {
+        "name": "Chi Xiao - Unsheath",
+        "spcost": "27-20",
+        "initialSP": "10-20",
+        "chargeType": "Attacking Enemy",
+        "skillActivation": "Manual Trigger",
+        "skillDescription": "Deals 330%-500%-500% of ATK Physical damage and 330% of ATK Arts damage to at most 4-7 enemies in front of this unit. Physica-al damageArts damage"
+      },
+      {
+        "name": "Chi Xiao - Shadowless",
+        "spcost": "40-30",
+        "initialSP": "10-20",
+        "chargeType": "Attacking Enemy",
+        "skillActivation": "Manual Trigger",
+        "skillDescription": "Seeks the closest enemy around and launches 10 slashes in a row, each dealing 2-400%-320% ATK as Physical damage and Stun the target on the last hit for 2 seconds"
+      }
+    ],
+    "module": {
+      "name": "罗德岛制式剑",
+      "level": "Lvl: 60",
+      "trust": "Trust: 100 (10,070 Points)",
+      "availability": "cn ",
+      "trait": "Skill damage increased by 10%Equip TraitSkill damage increased by 10%Equip TraitSkill damage increased by 10%",
+      "attribute": {
+        "atk": "50",
+        "attack_speed": "5"
+      },
+      "missions": [
+        "完成5次战斗；必须编入非助战陈并上场，且每次战斗至少释放一次赤霄·拔刀或赤霄·绝影",
+        "3星通关主题曲5-8；必须编入非助战陈并上场，且使用陈至少歼灭16名敌人"
+      ]
+    },
+    "base": [
+      {
+        "name": "Integrity & Capability",
+        "level": "Elite 0",
+        "effects": "When this Operator is assigned to the Control Center, each Operator from Lungmen Guard Department increases the Morale of all Operators in the Control Center by +0.05 per hour",
+        "building": "Control Center"
+      },
+      {
+        "name": "Police Superintendent",
+        "level": "Elite 2",
+        "effects": "When this Operator is assigned to the Reception Room, Clue search speed increases by 25%",
+        "building": "Reception Room"
+      }
+    ],
+    "headhunting": "Yes",
+    "recruitable": "Yes",
+    "art": {
+      "Base": "https://gamepress.gg/arknights/sites/arknights/files/2019-11/char_010_chen_1.png",
+      "E2": "https://gamepress.gg/arknights/sites/arknights/files/2019-11/char_010_chen_2.png",
+      "Ageless Afterglow": "https://gamepress.gg/arknights/sites/arknights/files/2020-02/ArtChenSkinNian.png"
+    },
+    "availability": "Global",
+    "url": "https://gamepress.gg/arknights/operator/Chen",
+    "dateAdded": "2022-06-25T19:48:20.275Z",
+    "__v": 3
+  }
+]

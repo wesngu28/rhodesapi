@@ -61,7 +61,27 @@
 		flex-direction: column;
 		overflow-x: hidden;
     width: 40rem;
+    flex-wrap: wrap;
+    word-wrap: break-word;
 	}
+
+  @media (max-width: 680px) {
+    .wrapper {
+      width: 30rem;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .wrapper {
+      width: 25rem;
+    }
+  }
+
+  @media (max-width: 410px) {
+    .wrapper {
+      width: 18rem;
+    }
+  }
 
 	h1 {
 		text-align: left;
@@ -73,5 +93,6 @@
 
   p {
     line-height: 1.5;
+    font-size: 1rem;
   }
 </style>
