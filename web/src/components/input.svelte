@@ -5,10 +5,10 @@
 	let method = ''
   currentDropdownSelection.subscribe(value => {
 		curr = value;
+		search = ''
 	});
 	api.subscribe((value) => {
 		method = value;
-		console.log(value)
 	});
   const handleKeydown = async (event: KeyboardEvent) => {
 		if (search) {

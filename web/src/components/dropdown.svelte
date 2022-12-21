@@ -3,39 +3,41 @@
   let selected = true
   let method = 'GET'
   let json: {[key: string]: any} = {};
+  api.subscribe((value) => {
+		method = value;
+	});
 	currResponse.subscribe((value) => {
 		json = value;
 	});
   function setDropdownSelection(this: HTMLButtonElement) {
-    if(this.textContent! === 'Operator Info') {
-      currResponse.set({})
-      currentDropdownSelection.set('/operator/')
-      method = 'GET'
-      api.set('GET')
-    }
-    if(this.textContent! === 'Operator Skin') {
-      currResponse.set({})
-      currentDropdownSelection.set('/skins/')
-      method = 'GET'
-      api.set('GET')
-    }
-    if(this.textContent! === 'Operator E2') {
-      currResponse.set({})
-      currentDropdownSelection.set('/skins/e2/')
-      method = 'GET'
-      api.set('GET')
-    }
+    selected = true
+    currResponse.set({})
     if(this.textContent! === 'Add Operator') {
-      currResponse.set({})
       currentDropdownSelection.set('/operator/')
-      method = 'POST'
       api.set('POST')
     }
     if(this.textContent! === 'Update Operator') {
-      currResponse.set({})
       currentDropdownSelection.set('/operator/')
-      method = 'PUT'
       api.set('PUT')
+    }
+    if(this.textContent! === 'Search Tags' || this.textContent! === 'Recruitment' || this.textContent! === 'Operator Info'
+    || this.textContent! === 'Operator Skin'|| this.textContent! === 'Operator E2') {
+      api.set('GET')
+    }
+    if(this.textContent! === 'Operator Info') {
+      currentDropdownSelection.set('/operator/')
+    }
+    if(this.textContent! === 'Operator Skin') {
+      currentDropdownSelection.set('/skins/')
+    }
+    if(this.textContent! === 'Operator E2') {
+      currentDropdownSelection.set('/skins/e2/')
+    }
+    if(this.textContent! === 'Search Tags') {
+      currentDropdownSelection.set('/search/')
+    }
+    if(this.textContent! === 'Recruitment') {
+      currentDropdownSelection.set('/recruit/')
     }
   }
 </script>
@@ -48,6 +50,8 @@
     <button on:click="{setDropdownSelection}">Operator E2</button>
     <button on:click="{setDropdownSelection}">Add Operator</button>
     <button on:click="{setDropdownSelection}">Update Operator</button>
+    <button on:click="{setDropdownSelection}">Search Tags</button>
+    <button on:click="{setDropdownSelection}">Recruitment</button>
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { currResponse, api, currentDropdownSelection, operatorName } from '../stores/stores';
-  let json: {[key: string]: any} = {};
+  let json: {[key: string]: any} | Array<{[key: string]: any}>;
 	currResponse.subscribe((value) => {
 		json = value;
 	});
@@ -19,7 +19,7 @@
 </script>
 
 <div>
-  {#if json}
+  {#if json && !Array.isArray(json)}
     {#if method === 'PUT'}
       {#if Object.keys(json).includes('acknowledged')}
         <p>Your update was {json.acknowledged ? 'acknowledged' : 'not acknowledged'}.
@@ -47,6 +47,14 @@
         {/each}
       {/if}
     {/if}
+  {:else}
+    <p>{json.length} operators found.</p>
+    <pre>
+      {#each json as operator}
+        {JSON.stringify(operator, null, 2)}
+        <p>&nbsp;</p>
+      {/each}
+    </pre>
   {/if}
 </div>
 
