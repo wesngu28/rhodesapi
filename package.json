@@ -10,6 +10,7 @@
     "build": "tsc",
     "watch-node": "nodemon dist/server.js",
     "watch-ts": "tsc -w",
+    "preinstall": "rm -rf web",
     "deploy": "heroku create -a rhodesapi && git add . && git commit -m Heroku && git push heroku main"
   },
   "keywords": [],
