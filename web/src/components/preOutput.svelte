@@ -72,8 +72,23 @@
   pre {
     width: 48rem;
     height: 48rem;
-    overflow: scroll;
+    overflow-y: scroll;
     white-space: pre-wrap;
     margin: 1rem;
+  }
+  @media (max-width: 800px) {
+    pre {
+			width: 40rem;
+    }
+  }
+	@media (max-width: 670px) {
+    pre {
+			width: 30rem;
+    }
+  }
+  @media (max-width: 550px) {
+    pre {
+			width: 95vw;
+    }
   }
 </style>

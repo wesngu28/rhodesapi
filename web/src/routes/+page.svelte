@@ -45,6 +45,15 @@
 
 	.form {
 		display: flex;
+		align-items: center;
 		margin-bottom: 1rem;
+		flex-wrap: wrap;
 	}
+
+	@media (max-width: 550px) {
+    .form {
+			justify-content: center;
+			width: 75vw;
+		}
+  }
 </style>

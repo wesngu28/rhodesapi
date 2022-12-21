@@ -34,4 +34,9 @@
 		width: 25vw;
 		padding: 0.75rem;
 	}
+	@media (max-width: 550px) {
+    input {
+			width: 75vw;
+    }
+  }
 </style>

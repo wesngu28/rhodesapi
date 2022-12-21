@@ -80,14 +80,12 @@
 	@media (max-width: 825px) {
     pre {
 			width: 30rem;
-    	max-height: 48rem;
     }
   }
 
 	@media (max-width: 525px) {
     pre {
 			width: 18rem;
-    	max-height: 48rem;
     }
   }
 </style>
