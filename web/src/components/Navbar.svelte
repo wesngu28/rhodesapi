@@ -8,6 +8,7 @@
 <style>
   nav {
     display: flex;
+    width: 100vw;
     justify-content: flex-end;
   }
   ul {
