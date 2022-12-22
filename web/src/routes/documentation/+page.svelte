@@ -36,11 +36,13 @@
 			route={'https://rhodesapi.cyclic.app/api/operator/:name'}
 			text={'Get a singular operator and their associated information.'}
 		/>
+		<p>https://rhodesapi.cyclic.app/api/operator/surtr</p>
 		<pre>{JSON.stringify(surtr, null, 2)}</pre>
 		<Docuroute
 			route={'https://rhodesapi.cyclic.app/api/skins/e2/:name'}
 			text={'Get the e2 art of the specified operator, if they have one.'}
 		/>
+		<p>https://rhodesapi.cyclic.app/api/operator/surtr</p>
 		<pre>{JSON.stringify(
 				{
 					e2: 'https://gamepress.gghttps://gamepress.gg/arknights/sites/arknights/files/2020-09/char_350_surtr_2.png'
@@ -52,6 +54,7 @@
 			route={'https://rhodesapi.cyclic.app/api/skins/:name'}
 			text={'Get the skins of the specified operator, if they have one.'}
 		/>
+		<p>https://rhodesapi.cyclic.app/api/operator/surtr</p>
 		<pre>{JSON.stringify(
 				{
 					'Liberté//Échec':
@@ -64,11 +67,13 @@
 			route={'https://rhodesapi.cyclic.app/api/search?'}
 			text={'Search operators based on provided query parameters. Non-case sensitive, for names with hyphens, hyphens can be provided in the request body but spaces are also supported.'}
 		/>
+		<p>https://rhodesapi.cyclic.app/api/search?race=sarkaz&class=guard&tags=dps</p>
 		<pre>{JSON.stringify(search, null, 2)}</pre>
 		<Docuroute
 			route={'https://rhodesapi.cyclic.app/api/recruit/:tagone/:tagtwo?:tagthree?'}
 			text={"Similar to the search query but supports only up to three tags. Returns matching operators with the provided tags and are recruitable to simulate the game's recruit system."}
 		/>
+		<p>https://rhodesapi.cyclic.app/api/recruit/guard/dps/nuker/</p>
 		<pre>{JSON.stringify(recruit, null, 2)}</pre>
 		<h2 id="Post">POST</h2>
 		<Docuroute
@@ -130,5 +135,9 @@
 		pre {
 			width: 18rem;
 		}
+	}
+
+	p {
+		margin-top: 3rem;
 	}
 </style>
