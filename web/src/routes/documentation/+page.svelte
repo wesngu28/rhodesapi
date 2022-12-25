@@ -113,9 +113,6 @@
 		text-align: left;
 	}
 
-	.route {
-		font-family: 'Courier New', Courier, monospace;
-	}
 	pre {
 		width: 48rem;
 		max-height: 48rem;
