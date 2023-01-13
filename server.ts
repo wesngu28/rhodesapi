@@ -1,32 +1,29 @@
-import express from 'express';
-import operatorRouter from './routes/operatorRoute';
-import recruitmentRouter from './routes/recruitRoute';
-import searchRouter from './routes/searchRoute';
-import skinRouter from './routes/skinRoute';
+import { operatorRouter } from './routes/operatorRoute';
+import { recruitRouter } from './routes/recruitRoute';
+import { searchRouter } from './routes/searchRoute';
+import { skinRouter } from './routes/skinRoute';
+import { defaultRouter } from './routes/defaultRoute';
 import { neuralConnect } from './models/connect';
 import dotenv from 'dotenv';
-import { RedisClient } from './models/redis';
-import cors from 'cors'
 dotenv.config();
 
-const app = express();
+import fastify from 'fastify';
 
-start();
+const app = fastify()
 
-async function start() {
-  await neuralConnect();
+app.register(defaultRouter)
+app.register(operatorRouter, { prefix: '/api' })
+app.register(recruitRouter, { prefix: '/api' })
+app.register(searchRouter, { prefix: '/api' })
+app.register(skinRouter, { prefix: '/api' })
 
-  app.use(cors())
-
-  app.use('/api/operator', operatorRouter);
-  app.use('/api/search', searchRouter);
-  app.use('/api/skins', skinRouter);
-  app.use('/api/recruit', recruitmentRouter);
-
-  app.use('*', (req, res) => {
-    res.status(404).json( { error: "Resource not found"})
-  })
-  await RedisClient.init();
-  const PORT = process.env.PORT || 5219;
-  app.listen(PORT, () => console.log(`Listening on ${PORT}!`));
+const start = async () => {
+  try {
+    await neuralConnect();
+    await app.listen({ port: 3200 })
+  } catch (err) {
+    app.log.error(err)
+    process.exit(1)
+  }
 }
+start()

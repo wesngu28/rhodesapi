@@ -1,8 +1,8 @@
-import express from 'express';
-const skinRouter = express.Router()
-const { getSkins, getE2 } = require('../controllers/skinController')
+import { getSkins, getE2 } from '../controllers/skinController';
+import { FastifyInstance } from 'fastify/types/instance';
 
-skinRouter.get('/e2/:name', getE2);
-skinRouter.get('/:name', getSkins);
-
-export default skinRouter;
+export function skinRouter (fastify: FastifyInstance, options: any, done: any) {
+  fastify.get('/skins/e2/:name', getSkins)
+  fastify.get('/skins/:name', getE2)
+  done()
+}

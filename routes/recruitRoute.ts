@@ -1,7 +1,7 @@
-import express from 'express';
-const recruitmentRouter = express.Router()
-import { recruitment } from '../controllers/recruitController'
+import { recruitment } from '../controllers/recruitController';
+import { FastifyInstance } from 'fastify/types/instance';
 
-recruitmentRouter.get('/:tagone/:tagtwo?/:tagthree?', recruitment);
-
-export default recruitmentRouter;
+export function recruitRouter (fastify: FastifyInstance, options: any, done: any) {
+  fastify.get('/recruit', recruitment)
+  done()
+}
