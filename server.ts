@@ -9,6 +9,8 @@ dotenv.config();
 
 import fastify from 'fastify';
 
+import cors from '@fastify/cors'
+
 const app = fastify()
 
 app.register(defaultRouter)
@@ -20,6 +22,7 @@ app.register(skinRouter, { prefix: '/api' })
 const start = async () => {
   try {
     await neuralConnect();
+    await app.register(cors)
     await app.listen({ port: 3200 })
   } catch (err) {
     app.log.error(err)
