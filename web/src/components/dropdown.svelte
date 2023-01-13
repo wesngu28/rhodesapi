@@ -1,17 +1,8 @@
 <script lang="ts">
-	import { currentDropdownSelection, api, currResponse } from '../stores/stores.js';
+	import { currentDropdownSelection, api } from '../stores/stores.js';
 	let selected = true;
-	let method = 'GET';
-	let json: { [key: string]: any } = {};
-	api.subscribe((value) => {
-		method = value;
-	});
-	currResponse.subscribe((value) => {
-		json = value;
-	});
 	function setDropdownSelection(this: HTMLButtonElement) {
 		selected = true;
-		currResponse.set({});
 		if (this.textContent! === 'Add Operator') {
 			currentDropdownSelection.set('/operator/');
 			api.set('POST');
@@ -48,7 +39,7 @@
 </script>
 
 <div class="dropdown">
-	<button class="first-button" on:click={() => (selected = !selected)}>{method}</button>
+	<button class="first-button" on:click={() => (selected = !selected)}>{$api}</button>
 	<div class={selected ? 'dropdown-content hidden' : 'dropdown-content'}>
 		<button on:click={setDropdownSelection}>Operator Info</button>
 		<button on:click={setDropdownSelection}>Operator Skin</button>
