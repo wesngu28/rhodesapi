@@ -3,6 +3,7 @@ import { requester } from '../util/getOperators';
 import { getStaticInformation } from '../util/getStaticInformation';
 import { getOrSetToCache } from '../middleware/getOrSetToCache';
 import { FastifyRequest, FastifyReply } from 'fastify'
+import { RedisClient } from "../models/redis"
 
 export const getAllOperators = async (req: FastifyRequest, res: FastifyReply) => {
   try {
@@ -101,6 +102,7 @@ export const updateOperator = async (req: FastifyRequest<{Params: {name: string}
         "url": updateInfo.url
       });
       res.status(200).send(updateOperator);
+      await RedisClient.del(`operator?name=${name}`)
     } else {
       res.status(405).send({
         error: 'Operator date not old enough to be updated yet.'

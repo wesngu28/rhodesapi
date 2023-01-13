@@ -2,6 +2,25 @@ import { getOrSetToCache } from '../middleware/getOrSetToCache';
 import Operator from '../models/operatorModel';
 import { FastifyRequest, FastifyReply } from 'fastify';
 
+export const getArt = async (req: FastifyRequest<{Params: {name: string}}>, res: FastifyReply) => {
+  try {
+    let name = req.params.name;
+    const art = await getOrSetToCache(`e2?name=${name}`, async ()=> {
+      const findOperator = await Operator.findOne({ name: name }, { art : 1 });
+      if (findOperator) {
+        const skins: {[key: string] : string} = findOperator['art'];
+        return skins;
+      }
+      res.status(404).send( { error: 'Specified operator does not exist.' } );
+      return;
+    });
+    if(!art) return;
+    res.status(200).send(art);
+  } catch (err: any) {
+    res.status(500).send( { error: err.message } );
+  }
+}
+
 export const getE2 = async (req: FastifyRequest<{Params: {name: string}}>, res: FastifyReply) => {
   try {
     let name = req.params.name;
