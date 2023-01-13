@@ -6,13 +6,13 @@
 	let recruit = {};
 	onMount(async () => {
 		const response = await fetch(
-			'https://raw.githubusercontent.com/wesngu28/rhodesapi/docusite/web/src/stores/default.json'
+			'https://raw.githubusercontent.com/wesngu28/rhodesapi/main/web/src/stores/default.json'
 		);
 		const response2 = await fetch(
-			'https://raw.githubusercontent.com/wesngu28/rhodesapi/docusite/web/src/routes/documentation/search.json'
+			'https://raw.githubusercontent.com/wesngu28/rhodesapi/main/web/src/routes/documentation/search.json'
 		);
 		const response3 = await fetch(
-			'https://raw.githubusercontent.com/wesngu28/rhodesapi/docusite/web/src/routes/documentation/recruit.json'
+			'https://raw.githubusercontent.com/wesngu28/rhodesapi/main/web/src/routes/documentation/recruit.json'
 		);
 		surtr = await response.json();
 		search = await response2.json();

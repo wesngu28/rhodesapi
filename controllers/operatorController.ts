@@ -1,24 +1,23 @@
-import { Request, Response } from 'express';
-import Operator, { operatorInterface } from '../models/operatorModel';
+import Operator from '../models/operatorModel';
 import { requester } from '../util/getOperators';
 import { getStaticInformation } from '../util/getStaticInformation';
 import { getOrSetToCache } from '../middleware/getOrSetToCache';
-const BASE_URL = 'https://gamepress.gg/arknights/operator/';
+import { FastifyRequest, FastifyReply } from 'fastify'
+import { RedisClient } from "../models/redis"
 
-//Fetch all operators
-export const getAllOperators = async (req: Request, res: Response) => {
-  // try {
+export const getAllOperators = async (req: FastifyRequest, res: FastifyReply) => {
+  try {
     const operators = await getOrSetToCache(`operator`, async ()=> {
       const allOperators = await Operator.find();
       return allOperators;
     });
-    res.status(200).json(operators);
-  // } catch (err: any) {
-  //   res.status(500).json( { error: err.message } )
-  // }
+    res.status(200).send(operators);
+  } catch (err: any) {
+    res.status(500).send( { error: err.message } )
+  }
 }
 
-export const getOperator = async (req: Request, res: Response) => {
+export const getOperator = async (req: FastifyRequest<{Params: {name: string}}>, res: FastifyReply) => {
   try {
     const name = req.params.name;
     const operator = await getOrSetToCache(`operator?name=${name}`, async ()=> {
@@ -30,48 +29,48 @@ export const getOperator = async (req: Request, res: Response) => {
       if(findOperator) {
         return findOperator;
       } else {
-        res.status(404).json( { error: 'Operator not found'});
+        res.status(404).send( { error: 'Operator not found'});
         return;
       }
     });
     if(!operator) return;
-    res.status(200).json(operator);
+    res.status(200).send(operator);
   } catch (err: any) {
-    res.status(500).json( { error: err.message } );
+    res.status(500).send( { error: err.message } );
   }
 }
 
-export const createOperator = async (req: Request, res: Response) => {
+export const createOperator = async (req: FastifyRequest<{Params: {name: string}}>, res: FastifyReply) => {
   try {
-    let name = req.params.name;
+    const name = req.params.name;
     const findOperator = await Operator.findOne({
       name: name
     });
     if (findOperator) {
-      res.status(400).json( { error: 'Operator already exists!' } );
+      res.status(400).send( { error: 'Operator already exists!' } );
     }
     const operatorList = await requester();
     const formatName = name.charAt(0).toUpperCase() + name.slice(1);
     if(operatorList.includes(formatName)) {
-      const createOperator = await getStaticInformation(BASE_URL + name);
+      const createOperator = await getStaticInformation('https://gamepress.gg/arknights/operator/' + name);
       await Operator.create(createOperator);
-      res.status(200).json(createOperator);
+      res.status(200).send(createOperator);
     } else {
-      res.status(404).json( { error: 'Operator is not yet understood by gamepress!' } );
+      res.status(404).send( { error: 'Operator is not yet understood by gamepress!' } );
     }
   } catch (err: any) {
-    res.status(500).json( {error: err.message } );
+    res.status(500).send( {error: err.message } );
   }
 }
 
-export const updateOperator = async (req: Request, res: Response) => {
+export const updateOperator = async (req: FastifyRequest<{Params: {name: string}}>, res: FastifyReply) => {
   try {
-    let name = req.params.name;
+    const name = req.params.name;
     const findOperator = await Operator.findOne({
       name: name
     });
     if (findOperator && findOperator.checkDate()) {
-      const updateInfo = await getStaticInformation(BASE_URL + name);
+      const updateInfo = await getStaticInformation('https://gamepress.gg/arknights/operator/' + name);
       const updateOperator = await Operator.replaceOne({
         name: updateInfo.name
       }, {
@@ -102,14 +101,15 @@ export const updateOperator = async (req: Request, res: Response) => {
         "availability": updateInfo.availability,
         "url": updateInfo.url
       });
-      res.status(200).json(updateOperator);
+      res.status(200).send(updateOperator);
+      await RedisClient.del(`operator?name=${name}`)
     } else {
-      res.status(405).json({
+      res.status(405).send({
         error: 'Operator date not old enough to be updated yet.'
       });
     }
   } catch (err: any) {
-    res.status(500).json({
+    res.status(500).send({
       error: err.message
     });
   }

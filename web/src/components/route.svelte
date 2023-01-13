@@ -1,13 +1,8 @@
 <script lang="ts">
 	import { currentDropdownSelection } from '../stores/stores';
-
-	let curr: string = '';
-	currentDropdownSelection.subscribe((value) => {
-		curr = value;
-	});
 </script>
 
-<div class="text">{`https://rhodesapi.cyclic.app/api${curr}`}</div>
+<div class="text">{`https://rhodesapi.cyclic.app/api${$currentDropdownSelection}`}</div>
 
 <style>
 	.text {

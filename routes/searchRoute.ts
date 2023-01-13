@@ -1,7 +1,7 @@
-import express from 'express';
-const searchRouter = express.Router()
 import { searchOperators } from '../controllers/searchController';
+import { FastifyInstance } from 'fastify/types/instance';
 
-searchRouter.get('', searchOperators);
-
-export default searchRouter;
+export function searchRouter (fastify: FastifyInstance, options: any, done: any) {
+  fastify.get('/search', searchOperators)
+  done()
+}

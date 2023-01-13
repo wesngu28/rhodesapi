@@ -1,16 +1,14 @@
-import { Request, Response } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 import { getOrSetToCache } from '../middleware/getOrSetToCache';
 import Operator from '../models/operatorModel';
-import { RedisClient } from '../models/redis';
 
-export const searchOperators = async (req: Request, res: Response) => {
-  try {
+export const searchOperators = async (req: FastifyRequest<{Querystring: {[key: string]: any}}>, reply: FastifyReply) => {
+    let queries = Object.assign({}, req.query)
     const objectLevel = ['gender', 'birth', 'race', 'building'];
-    if(Object.keys(req.query).length === 0) {
-      res.status(400).send('No parameters specified!');
+    if(Object.keys((queries)).length === 0) {
+      reply.status(400).send('No parameters specified!');
       return;
     }
-    let queries = req.query;
     Object.keys(queries).forEach(key => {
       let formatKey = key;
       if(objectLevel.includes(formatKey)) {
@@ -88,20 +86,15 @@ export const searchOperators = async (req: Request, res: Response) => {
         queries
       );
       if(findOperator.length === await Operator.countDocuments({}).exec()){
-        res.status(400).json( { error: 'Invalid parameter specified!' } );
+        reply.status(400).send( { error: 'Invalid parameter specified!' } );
         return;
       }
       if (findOperator[0] === undefined ) {
-        res.status(404).json( { error: 'No operators found for this query!' } );
+        reply.status(404).send( { error: 'No operators found for this query!' } );
       }
-      if (findOperator[0]) {
-        return findOperator;
-      }
+      if (findOperator[0]) return findOperator;
       return;
     });
     if(!matchOperators) return;
-    res.status(200).json(matchOperators);
-  } catch (err: any) {
-    res.status(500).json( { error: err.message } );
-  }
+    reply.status(200).send(matchOperators);
 }

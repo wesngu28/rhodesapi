@@ -11,32 +11,18 @@ export const getStaticInformation = async (url: string) => {
 
     const $ = load(await operatorHTML.text());
     await sleep(7500);
-    //Start scraping operator information
 
-    //Rarity
     const rarity = $('.rarity-cell > img').length;
-    //Name
     const name = $('#page-title > h1');
-
-    //Alter
     const alter = $('.alter-parent .name');
-
-    //Biography
     const biography = $('.profile-description:first');
-
-    //Description - operator quote, description, and trait
     const description: string[] = [];
     $('.description-box').each(function(){
       description.push(checkForExistence($(this)));
     })
-
-    //Artist Link
     let artist = $('.profile-info-table > table > tbody > tr > td > a:first');
-
-    //Voice Actor (Japanese)
     const jpva = $('.profile-info-table > table > tbody > tr:nth-child(2) > td > a');
 
-    //Classes
     const classes: string[] = [];
     $('.profession-title').each(function(){
       classes.push(checkForExistence($(this)));
@@ -47,16 +33,13 @@ export const getStaticInformation = async (url: string) => {
       classes[1] = classes[1].substring(0, index-1);
     }
     const uniqueClasses = [...new Set(classes)];
-    //Tags/recruitment
+
     const recruitment: string[] = [];
     $('.tag-title').each(function(){
       recruitment.push(checkForExistence($(this)));
     })
-    //one of the tags are already included in classes, pop off
     recruitment.pop();
     recruitment.push(classes[0]);
-
-    //Obtainable, can return 3 length array if operator is limited
     const obtainable: string[] = [];
     $('.obtain-approach-table span').each(function(){
       obtainable.push(checkForExistence($(this)));
@@ -65,7 +48,7 @@ export const getStaticInformation = async (url: string) => {
       obtainable[0] = 'Yes';
       obtainable[1] = 'No';
     }
-    //Potential
+
     const potential: Array<{name: string, value: string}>  = [];
     const potentialName: string[] = [];
     $('.potential-cell .potential-icon').each(function(){
@@ -83,7 +66,6 @@ export const getStaticInformation = async (url: string) => {
       potential.push(pot);
     }
 
-    //Trust
     const trust: { [key: string]: string } = {};
     const trustName: string[] = [];
     $('.trust-cell .potential-icon').each(function(){
@@ -95,7 +77,6 @@ export const getStaticInformation = async (url: string) => {
     })
     trustName.forEach((trustName, i) => trust[trustName] = trustValue[i]);
 
-    //Talent
     const talent: Array<{name: string, value: string}> = [];
     const talentNames: string[] = [];
     $('.talent-title').each(function(){
@@ -112,7 +93,7 @@ export const getStaticInformation = async (url: string) => {
       }
       talent.push(talents);
     }
-    //Skills
+
     const skills = [];
     const skillUrls: string[] = [];
     $('.skill-title-cell > a').each(function(){
@@ -160,7 +141,6 @@ export const getStaticInformation = async (url: string) => {
       skills.push(skill);
     }
 
-    //Modules
     const moduleName = $('.module-title:last > a');
     const moduleLvl = $('.module-lvl:last > span');
     const moduleTrust = $('.module-trust:last');
@@ -193,7 +173,6 @@ export const getStaticInformation = async (url: string) => {
       missions: unlockCriteria
     }
 
-    //Base Skills
     const base: Array<{name: string, level: string, effects: string, building: string}> = [];
     const baseSkillNames: string[] = [];
     $('.building-buff-cell .title-cell').each(function(){
@@ -223,7 +202,7 @@ export const getStaticInformation = async (url: string) => {
       }
       base.push(baseAddition);
     }
-    //Character Info Tables
+
     const characterInfo: { [key: string]: string } = {};
     const infoKeys: string[] = [];
     $('.profile-info-table > table:nth-child(2) th').each(function(){
@@ -244,7 +223,6 @@ export const getStaticInformation = async (url: string) => {
       characterInfo['Height'] = 'No Known Height';
     }
 
-    //Affiliated Lore Groups
     const affiliations: string[] = [];
     $('.group-name > a').each(function(){
       affiliations.push(checkForExistence($(this)));
@@ -255,7 +233,6 @@ export const getStaticInformation = async (url: string) => {
       tips = $('.main-title + h2');
     }
 
-    //Voice Lines
     const voiceLines: { [key: string]: string } = {};
     const voiceLineConditions: string[] = [];
     $('.voice-lines-table th').each(function(){
@@ -267,7 +244,6 @@ export const getStaticInformation = async (url: string) => {
     })
     voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
-    //Art
     const operatorArt: { [key: string] : string } = {};
     const imgSrcList: string[] = [];
     $('.operator-image > a > img').each(function(){
