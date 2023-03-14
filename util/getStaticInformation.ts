@@ -258,19 +258,8 @@ export const getStaticInformation = async (url: string) => {
     const compare = Object.keys(operatorArt);
     for (let i = 0; i < imgLinkList.length; i++) {
       operatorArt[compare[i]] = 'https://gamepress.gg' + operatorArt[compare[i]];
-      if(rarity > 2 && i === 0) {
-        delete operatorArt[compare[i]];
-      }
-      if(rarity === 2 && i === 0) {
+      if(rarity < 2 && i === 0) {
         operatorArt['Base'] = operatorArt[compare[i]];
-        delete operatorArt[compare[i]];
-      }
-      if(rarity > 2 && i === 1) {
-        operatorArt['Base'] = operatorArt[compare[i]];
-        delete operatorArt[compare[i]];
-      }
-      if(compare[i].includes('https') && i === 2) {
-        operatorArt['E2'] = operatorArt[compare[i]];
         delete operatorArt[compare[i]];
       }
       if (!compare[i].includes('png')) {
