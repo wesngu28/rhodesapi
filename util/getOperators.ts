@@ -9,16 +9,12 @@ export async function requester() {
   $('.operator-title-actual').each(function(){
     let name = $(this).text().replaceAll('(', '');
     name = name.replaceAll(')', '');
-    name = name.replaceAll('the', '');
-    name = name.replaceAll('The', '');
+    name = name.replace(/(?<!-)\bthe\b(?!\s*-)*/gi, '');
     name = name.replaceAll("'", '');
     name = name.replaceAll('.', '');
     name = name.replaceAll(' ', '-');
     name = name.replaceAll('---', '-');
     name = name.replaceAll('--', '-');
-    if(name === 'Absin') {
-      name = 'Absinthe';
-    }
     data.push(name);
   });
   const operatorJSON = JSON.stringify(data, null, '\t');
