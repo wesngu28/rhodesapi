@@ -3,30 +3,42 @@ import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { sleep } from './sleep';
 import { operatorInterface } from '../models/operatorModel';
-import { parse } from 'node-html-parser';
+import { HTMLElement, parse } from 'node-html-parser';
 
 export const getStaticInformation = async (url: string) => {
-  try {
+  // try {
     const operatorHTML = await fetch(url);
 
     const operator = parse(await operatorHTML.text());
     // await sleep(7500);
 
-    let rarity = operator.querySelector('.rarity-cell > img');
+    let rarity = operator.querySelectorAll('.rarity-cell > img').length;
     const name = operator.querySelector('#page-title > h1');
     const alter = operator.querySelector('.alter-parent .name');
-    const biography = operator.querySelector('.profile-description:first-child');
+    const biography = operator.querySelector('.profile-description');
 
-    const descriptionArr: string[] = [];
-    let descriptionBox = operator.querySelectorAll('.description-box')
-    descriptionBox.forEach(description => descriptionArr.push(description.textContent.replace(/\n/g, '')))
+    let descriptionBox = operator.querySelectorAll('.description-box');
+    let descriptionArr: string[] = [];
 
-    let artist = operator.querySelector('.profile-info-table > table > tbody > tr > td > a:first-child');
-    const jpva = operator.querySelector('.profile-info-table > table > tbody > tr:nth-child(2) > td > a');
+    descriptionBox.forEach(box => {
+      box.childNodes.forEach(node => {
+        if (node instanceof HTMLElement) {
+          if (node.tagName === "PRE") {
+            box.removeChild(node)
+          }
+        }
+      })
+      descriptionArr.push(box.textContent.replace(/\n/g, ''));
+    });
+
+    let artist = operator.querySelector('.profile-info-table > table > tr > td > a:first-child');
+    const jpva = operator.querySelector('.profile-info-table > table > tr:nth-child(2) > td > a');
 
     const classArr = operator.querySelectorAll('.profession-title').map(clas => clas.textContent);
     const [primaryClass, secondaryClass] = classArr[1].includes('/') ? classArr[1].split(' / ') : [classArr[1]];
-    const uniqueClasses = [...new Set([classArr[0].replace(/\n/g, ''), primaryClass.replace(/\n/g, ''), secondaryClass.replace(/\n/g, '')])];
+    const uniqueClasses = [...new Set([classArr[0].replace(/\n/g, '')])];
+    if (primaryClass) uniqueClasses.push(primaryClass.replace(/\n/g, ''))
+    if (secondaryClass) uniqueClasses.push(secondaryClass.replace(/\n/g, ''))
 
     const recruitment = operator.querySelectorAll('.tag-title').map(tag => tag.textContent.replace(/\n/g, ''))
     recruitment.pop();
@@ -81,7 +93,8 @@ export const getStaticInformation = async (url: string) => {
 
     const skillsTabs = operator.querySelectorAll('.skill-cell').map((skill, i) => {
       let name = checkForExistence(skill.querySelector(".skill-title-cell a:last-child"))
-      let skillDescription = checkForExistence(skill.querySelector('.skill-description > .skill-upgrade-tab-1'));
+      let skillDescription = skill.querySelector('.skill-description > .skill-upgrade-tab-1')?.innerHTML.replace(/<br/g, '')!;
+      skillDescription = skillDescription.replace(/<span[^>]*>/gi, "").replace(/<\/span>/gi, "").replaceAll('>', '. ')
       const initialSkillValues = operator.querySelectorAll(`#skill-tab-${1 + i} .skill-upgrade-tab-1 .skill-description-value`).map(skill => checkForExistence(skill))
       const finalSkillValues: string[] = operator.querySelectorAll(`#skill-tab-${1 + i} .skill-description > .skill-upgrade-tab-10 .skill-description-value`).map(skill => checkForExistence(skill))
       let attemptMashDesc = ""
@@ -92,7 +105,7 @@ export const getStaticInformation = async (url: string) => {
       }
       const skiller = {
         name: name.substring(name.indexOf(' ', name.indexOf(':')) + 1),
-        SPCost: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`))),
+        spCost: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`))),
         initialSP: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.initial-sp> .skill-upgrade-tab-${i}`))),
         skillCharge: checkForExistence(skill.querySelector('.sp-charge-type a')),
         skillActivation: checkForExistence(skill.querySelector('.skill-activation a')),
@@ -134,13 +147,14 @@ export const getStaticInformation = async (url: string) => {
           level: i,
           trait: checkForExistence(modulos.querySelector('.module-row-2')),
           attributes: moduleAttribute,
-          talent_changes: talent,
+          talentChanges: talent,
           unlock: unlockCriteria
         };
-        const existingModuleIndex = modules.findIndex((module) => module.name === moduleName);
+        const existingModuleIndex = modules.findIndex((moduler) => moduler.name === moduleName);
         if (existingModuleIndex !== -1) {
           modules[existingModuleIndex].levels.push(moduleData);
         } else {
+          if (!modules[0].name) modules.pop()
           modules.push({
             name: moduleName,
             trust: checkForExistence(modulos.querySelector(".module-trust")),
@@ -151,134 +165,64 @@ export const getStaticInformation = async (url: string) => {
       });
     }
 
-    // const base: Array<{name: string, level: string, effects: string, building: string}> = [];
-    // const baseSkillNames: string[] = [];
-    // $('.building-buff-cell .title-cell').each(function(){
-    //   baseSkillNames.push(checkForExistence($(this)));
-    // });
-    // const baseSkillLevel: string[] = [];
-    // $('.building-buff-cell .level-cell img').each(function(){
-    //   if($(this).attr('src')) {
-    //     baseSkillLevel.push(`Elite ${$(this).attr('src')![41]}`)
-    //   }
-    // });
-    // const baseSkillEffects: string[] = [];
-    // $('.building-buff-cell .build-description-cell').each(function(){
-    //   baseSkillEffects.push(checkForExistence($(this)));
-    // });
-    // const baseSkillBuildings: string[] = [];
-    // $('.buff-type-cell').each(function(){
-    //   baseSkillBuildings.push(checkForExistence($(this)));
-    // });
+    if (!modules) modules = [{"status": "Operator has no modules"}]
 
-    // for(let i = 0; i < baseSkillNames.length; i++) {
-    //   const baseAddition = {
-    //     name: baseSkillNames[i],
-    //     level: baseSkillLevel[i],
-    //     effects: baseSkillEffects[i],
-    //     building: baseSkillBuildings[i]
-    //   }
-    //   base.push(baseAddition);
-    // }
+    const base = operator.querySelectorAll('.building-buff-cell').map(el => {
+      const name = checkForExistence(el.querySelector('.title-cell'));
+      const level = el.querySelector('.level-cell img[src]')?.getAttribute('src')?.[41] ? `Elite ${el.querySelector('.level-cell img[src]')!.getAttribute('src')![41]}` : '';
+      const effects = checkForExistence(el.querySelector('.build-description-cell'));
+      const building = checkForExistence(el.querySelector('.buff-type-cell'));
+      return { name, level, effects, building };
+    });
 
-    // const characterInfo: { [key: string]: string } = {};
-    // const infoKeys: string[] = [];
-    // $('.profile-info-table > table:nth-child(2) th').each(function(){
-    //   infoKeys.push(checkForExistence($(this)));
-    // });
-    // $('.profile-info-table > table:nth-child(4) th').each(function(){
-    //   infoKeys.push(checkForExistence($(this)));
-    // });
-    // const infoBody: string[] = [];
-    // $('.profile-info-table > table:nth-child(2) td').each(function(){
-    //   infoBody.push(checkForExistence($(this)));
-    // });
-    // $('.profile-info-table > table:nth-child(4) td').each(function(){
-    //   infoBody.push(checkForExistence($(this)));
-    // });
-    // infoKeys.forEach((infoKeys, i) => characterInfo[infoKeys] = infoBody[i]);
-    // if (characterInfo.hasOwnProperty('Height') === false) {
-    //   characterInfo['Height'] = 'No Known Height';
-    // }
+    const characterInfo: {[key: string]: string} = {};
+    const infoKeys = operator.querySelectorAll('.profile-info-table > table:nth-child(2) th, .profile-info-table > table:nth-child(4) th').map(th => checkForExistence(th).replaceAll(' ', '_').toLowerCase());
+    const infoBody = operator.querySelectorAll('.profile-info-table > table:nth-child(2) td, .profile-info-table > table:nth-child(4) td').map(td => checkForExistence(td));
+    infoKeys.forEach((key, i) => characterInfo[key] = infoBody[i]);
+    if (!characterInfo.hasOwnProperty('height')) {
+      characterInfo['Height'] = 'No Known Height';
+    }
 
-    // const affiliations: string[] = [];
-    // $('.group-name > a').each(function(){
-    //   affiliations.push(checkForExistence($(this)));
-    // });
+    const affiliations: string[] = operator.querySelectorAll('.group-name > a')?.map(affiliation => checkForExistence(affiliation));
 
-    // let tips = $('.main-title + h2 > p')
-    // if(checkForExistence(tips) === '') {
-    //   tips = $('.main-title + h2');
-    // }
+    const voiceLines: { [key: string]: string } = {};
+    const voiceLineConditions = operator.querySelectorAll('.voice-lines-table th').map(th => checkForExistence(th).replaceAll(' ', '_').toLowerCase());
+    const voiceLinesContent = operator.querySelectorAll('.voice-lines-table td').map(td => checkForExistence(td));
+    voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
-    // const voiceLines: { [key: string]: string } = {};
-    // const voiceLineConditions: string[] = [];
-    // $('.voice-lines-table th').each(function(){
-    //   voiceLineConditions.push(checkForExistence($(this)));
-    // })
-    // const voiceLinesContent: string[] = [];
-    // $('.voice-lines-table td').each(function(){
-    //   voiceLinesContent.push(checkForExistence($(this)));
-    // })
-    // voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
-
-    // const operatorArt: { [key: string] : string } = {};
-    // const imgSrcList: string[] = [];
-    // $('.operator-image > a > img').each(function(){
-    //   imgSrcList.push($(this).attr('src')!)});
-    // const imgLinkList: string[] = [];
-    // $('.operator-image > a').each(function(){
-    //   imgLinkList.push($(this).attr('href')!);
-    // });
-    // imgLinkList.forEach((imgLinkList, i) => {
-    //   operatorArt[imgLinkList] = imgSrcList[i];
-    // });
-    // const compare = Object.keys(operatorArt);
-    // for (let i = 0; i < imgLinkList.length; i++) {
-    //   operatorArt[compare[i]] = 'https://gamepress.gg' + operatorArt[compare[i]];
-    //   if(rarity > 2 && i === 0) {
-    //     delete operatorArt[compare[i]];
-    //   }
-    //   if(rarity < 2 && i === 0) {
-    //     operatorArt['Base'] = operatorArt[compare[i]];
-    //     delete operatorArt[compare[i]];
-    //   }
-    //   if(rarity > 2 && i === 1) {
-    //     operatorArt['Base'] = operatorArt[compare[i]];
-    //     delete operatorArt[compare[i]];
-    //   }
-    //   if(compare[i].includes('https') && i === 2) {
-    //     operatorArt['E2'] = operatorArt[compare[i]];
-    //     delete operatorArt[compare[i]];
-    //   }
-    //   if (!compare[i].includes('png')) {
-    //     const url = 'https://gamepress.gg/' + compare[i];
-    //     const test = await fetch(url);
-    //     const $ = load(await test.text());
-    //     const name = $('#page-title > h1').text();
-    //     operatorArt[name] = operatorArt[compare[i]];
-    //     delete operatorArt[compare[i]];
-    //   }
-    // }
-    // console.log(operatorArt)
-
+    const operatorArt: { [key: string]: string } = {};
+    const imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!);
+    operatorArt['Base'] = imgLinkList[0];
+    imgLinkList.shift()
+    if (rarity > 2) {
+      imgLinkList.shift()
+      operatorArt['E2'] = imgLinkList[0]
+    }
+    for (let i = 0; i < imgLinkList.length; i++) {
+      if (!imgLinkList[i].includes('png')) {
+        const test = await fetch('https://gamepress.gg/' + imgLinkList[i]);
+        const skin = parse(await test.text());
+        const name = checkForExistence(skin.querySelector('#page-title > h1'));
+        operatorArt[name] = imgLinkList[i];
+      }
+    }
     // const costs = await getCosts(url);
     // const statistics = await getStatistics(url);
-
-    // const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
+    const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
+    const availability = checkForExistence(operator.querySelector('.obtain-approach-table'));
     const dict = {
-      // "_id": gamepressname,
+      "_id": gamepressname,
       "name": checkForExistence(name),
-      "rarity": Number(checkForExistence(rarity)),
+      "rarity": rarity,
       "alter": checkForExistence(alter),
       "artist": checkForExistence(artist),
       "va": checkForExistence(jpva),
       "biography": checkForExistence(biography),
       "description": descriptionArr[1] as string,
       "quote": descriptionArr[2] as string,
-      // "voicelines": voiceLines,
-      // "lore": characterInfo,
-      // "affiliation": affiliations,
+      "voicelines": voiceLines,
+      "lore": characterInfo,
+      "affiliation": affiliations,
       "class": uniqueClasses,
       "tags": recruitment,
       // "statistics": statistics,
@@ -289,28 +233,21 @@ export const getStaticInformation = async (url: string) => {
       "talents": talent,
       "skills": skillsTabs,
       "module": modules,
-      // "base": base,
+      "base": base,
       "headhunting": obtainable[0] as string,
       "recruitable": obtainable[1] as string,
-      // "art": operatorArt,
-      "availability": '',
-      "url": '',
+      "art": operatorArt,
+      "availability": availability.includes('N/A') ? "CN only" : "Global",
+      "url": url,
     }
-    // const availability = $('.obtain-approach-table').text();
-    // if(availability.includes('N/A')){
-    //   dict['availability'] = 'CN only';
-    // } else {
-    //   dict['availability'] = 'Global';
-    // }
-    dict['url'] = url;
     console.log(dict)
     // return dict;
-  } catch (err: any) {
-    throw new Error(err.message);
-  }
+  // } catch (err: any) {
+  //   throw new Error(err.message);
+  // }
 }
 
-getStaticInformation("https://gamepress.gg/arknights/operator/skadi")
+getStaticInformation("https://gamepress.gg/arknights/operator/rockrock")
 
 function checkForExistence(field: any): string {
   if (!field || !field.textContent) {
