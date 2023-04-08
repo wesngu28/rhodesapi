@@ -4,6 +4,7 @@ import { getCosts } from './getCosts';
 import { sleep } from './sleep';
 import { operatorInterface } from '../models/operatorModel';
 import { HTMLElement, parse } from 'node-html-parser';
+import { getRange } from './getRange';
 
 export const getStaticInformation = async (url: string) => {
   // try {
@@ -13,6 +14,20 @@ export const getStaticInformation = async (url: string) => {
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
     const name = checkForExistence(operator.querySelector('#page-title > h1'));
+
+    const rangeBox = operator.querySelectorAll('.operator-image .range-box');
+    const cells = rangeBox.map((currRange, i) => {
+      const currCells = currRange.querySelectorAll('.range-cell')
+      const range = Array.from(currCells).map(cell => {
+        let blocks = Array.from(cell.querySelectorAll('span')).map(block => block.classList.contains('empty-box') ? "attackable" : block.classList.contains('fill-box') ? "unit" : "null")
+        return blocks
+      })
+      return {
+        elite: i === 0 ? "Base" : i === 1 ? "E1" : "E2",
+        range: range
+      }
+    });
+
     const alter = checkForExistence(operator.querySelector('.alter-parent .name'));
     const biography = checkForExistence(operator.querySelector('.profile-description'));
 
@@ -97,6 +112,15 @@ export const getStaticInformation = async (url: string) => {
           attemptMashDesc = skillDescription.replace(initialSkillValues[i], `${initialSkillValues[i]}-${finalSkillValues[i]}`)
         }
       }
+      const rangeBoxes = skill.querySelectorAll('.skill-range-box .range-box');
+      const skillRanges = rangeBoxes.map(boxes => {
+        const currCells = boxes.querySelectorAll('.range-cell')
+        const range = Array.from(currCells).map(cell => {
+          let blocks = Array.from(cell.querySelectorAll('span')).map(block => block.classList.contains('empty-box') ? "attackable" : block.classList.contains('fill-box') ? "unit" : "null")
+          return blocks
+        })
+        return range
+      })
       return {
         name: name.substring(name.indexOf(' ', name.indexOf(':')) + 1),
         spCost: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`))),
@@ -104,6 +128,7 @@ export const getStaticInformation = async (url: string) => {
         skillCharge: checkForExistence(skill.querySelector('.sp-charge-type a')),
         skillActivation: checkForExistence(skill.querySelector('.skill-activation a')),
         duration: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.skill-duration> .skill-upgrade-tab-${i}`))),
+        range: skillRanges[0] ? skillRanges : "Skill does not modify range",
         skillDescription: skillDescription,
         skillProgressDescription: attemptMashDesc
       }
@@ -199,13 +224,14 @@ export const getStaticInformation = async (url: string) => {
         operatorArt[name] = { link: 'https://gamepress.gg/' + imgLinkList[i], line: line };
       }
     }
-    const costs = await getCosts(url);
-    const statistics = await getStatistics(url);
+    // const costs = await getCosts(url);
+    // const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
     const availability = checkForExistence(operator.querySelector('.obtain-approach-table'));
     const dict = {
       "_id": gamepressname,
       "name": name,
+      "range": cells,
       "rarity": rarity,
       "alter": alter,
       "artist": artist,
@@ -218,9 +244,9 @@ export const getStaticInformation = async (url: string) => {
       "affiliation": affiliations,
       "class": uniqueClasses,
       "tags": recruitment,
-      "statistics": statistics,
+      // "statistics": statistics,
+      // "costs": costs,
       "trait": descriptionArr[0] as string,
-      "costs": costs,
       "potential": potential,
       "trust": trust,
       "talents": talent,
@@ -239,7 +265,7 @@ export const getStaticInformation = async (url: string) => {
   // }
 }
 
-getStaticInformation("https://gamepress.gg/arknights/operator/rockrock")
+// getStaticInformation("https://gamepress.gg/arknights/operator/schwarz")
 
 function checkForExistence(field: any): string {
   if (!field || !field.textContent) {
