@@ -2,3 +2,4 @@ node_modules/
 puppet/
 dist/
 dump.rdb
+web
