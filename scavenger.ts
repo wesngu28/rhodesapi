@@ -63,7 +63,9 @@ async function scavenger() {
   //     }
   //   } else {
       const createdOperator = await getStaticInformation(BASE_URL + operators[i]);
-      await Operator.create(createdOperator);
+      fs.writeFile('./' + operators[i] + '.json',  JSON.stringify(createdOperator), err => {
+        if (err) { console.log("Error writing to file.")}});
+      // await Operator.create(createdOperator);
       console.log(`${operators[i]} recruited`)
     // }
   }

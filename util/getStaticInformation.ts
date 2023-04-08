@@ -8,19 +8,15 @@ import { HTMLElement, parse } from 'node-html-parser';
 export const getStaticInformation = async (url: string) => {
   // try {
     const operatorHTML = await fetch(url);
-
     const operator = parse(await operatorHTML.text());
     // await sleep(7500);
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
-    const name = operator.querySelector('#page-title > h1');
-    const alter = operator.querySelector('.alter-parent .name');
-    const biography = operator.querySelector('.profile-description');
+    const name = checkForExistence(operator.querySelector('#page-title > h1'));
+    const alter = checkForExistence(operator.querySelector('.alter-parent .name'));
+    const biography = checkForExistence(operator.querySelector('.profile-description'));
 
-    let descriptionBox = operator.querySelectorAll('.description-box');
-    let descriptionArr: string[] = [];
-
-    descriptionBox.forEach(box => {
+    let descriptionArr = operator.querySelectorAll('.description-box').map(box => {
       box.childNodes.forEach(node => {
         if (node instanceof HTMLElement) {
           if (node.tagName === "PRE") {
@@ -28,11 +24,11 @@ export const getStaticInformation = async (url: string) => {
           }
         }
       })
-      descriptionArr.push(box.textContent.replace(/\n/g, ''));
+      return box.textContent.replace(/\n/g, '')
     });
 
-    let artist = operator.querySelector('.profile-info-table > table > tr > td > a:first-child');
-    const jpva = operator.querySelector('.profile-info-table > table > tr:nth-child(2) > td > a');
+    let artist = checkForExistence(operator.querySelector('.profile-info-table > table > tr > td > a:first-child'));
+    const jpva = checkForExistence(operator.querySelector('.profile-info-table > table > tr:nth-child(2) > td > a'));
 
     const classArr = operator.querySelectorAll('.profession-title').map(clas => clas.textContent);
     const [primaryClass, secondaryClass] = classArr[1].includes('/') ? classArr[1].split(' / ') : [classArr[1]];
@@ -44,39 +40,37 @@ export const getStaticInformation = async (url: string) => {
     recruitment.pop();
     recruitment.push(classArr[0].replace(/\n/g, ''));
 
-    const obtainable: string[] = operator.querySelectorAll('.obtain-approach-table span').map(existence => existence.textContent)
+    const obtainable = operator.querySelectorAll('.obtain-approach-table span').map(existence => existence.textContent)
     if(obtainable[1] === '(LIMITED)'){
       obtainable[0] = 'Yes';
       obtainable[1] = 'No';
     }
 
-    const potential: Array<{name: string, value: string}> = [];
-    operator.querySelectorAll('.potential-list').forEach(cell => {
-      potential.push({
+    const potential: Array<{name: string, value: string}> = operator.querySelectorAll('.potential-list').map(cell => {
+      return({
         "name": checkForExistence(cell.querySelector('.potential-icon')),
         "value": checkForExistence(cell.querySelector('.potential-title'))
       });
     })
 
-    const trust: Array<{name: string, value: string}> = [];
-    operator.querySelectorAll('.trust-cell .potential-list').forEach(cell => {
-      trust.push({
+    const trust: Array<{name: string, value: string}> = operator.querySelectorAll('.trust-cell .potential-list').map(cell => {
+      return({
         "name": checkForExistence(cell.querySelector('.potential-icon')),
         "value": checkForExistence(cell.querySelector('.potential-title'))
       });
     })
 
-    const talent: Array<{name: string, value: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number}> = [];
-    operator.querySelectorAll('.talent-child').forEach(cell => {
-      let eliteImage = cell.querySelector('.elite-level img')
-      let potential = cell.querySelector('.potential-level img')
-      let loc = potential?.getAttribute("src")?.indexOf(".png")
-      talent.push({
-        "name": checkForExistence(cell.querySelector('.talent-title')),
-        "value": checkForExistence(cell.querySelector('.talent-description')),
-        "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
-        "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
-      });
+    const talent: Array<{name: string, value: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number}> = operator
+      .querySelectorAll('.talent-child').map(cell => {
+        let eliteImage = cell.querySelector('.elite-level img')
+        let potential = cell.querySelector('.potential-level img')
+        let loc = potential?.getAttribute("src")?.indexOf(".png")
+        return({
+          "name": checkForExistence(cell.querySelector('.talent-title')),
+          "value": checkForExistence(cell.querySelector('.talent-description')),
+          "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
+          "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
+        });
     })
 
     operator.querySelectorAll('.talent-cell .paragraph--type--module-talent-attributes').forEach(cell => {
@@ -103,7 +97,7 @@ export const getStaticInformation = async (url: string) => {
           attemptMashDesc = skillDescription.replace(initialSkillValues[i], `${initialSkillValues[i]}-${finalSkillValues[i]}`)
         }
       }
-      const skiller = {
+      return {
         name: name.substring(name.indexOf(' ', name.indexOf(':')) + 1),
         spCost: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`))),
         initialSP: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.initial-sp> .skill-upgrade-tab-${i}`))),
@@ -113,7 +107,7 @@ export const getStaticInformation = async (url: string) => {
         skillDescription: skillDescription,
         skillProgressDescription: attemptMashDesc
       }
-      return skiller
+
     })
 
     let modules: [{[key: string]: any}] = [{}];
@@ -145,7 +139,7 @@ export const getStaticInformation = async (url: string) => {
         )];
         const moduleData = {
           level: i,
-          trait: checkForExistence(modulos.querySelector('.module-row-2')),
+          trait: checkForExistence(modulos.querySelector('.module-row-2')).replace('Equip Trait', ''),
           attributes: moduleAttribute,
           talentChanges: talent,
           unlock: unlockCriteria
@@ -157,8 +151,8 @@ export const getStaticInformation = async (url: string) => {
           if (!modules[0].name) modules.pop()
           modules.push({
             name: moduleName,
-            trust: checkForExistence(modulos.querySelector(".module-trust")),
-            availability: checkForExistence(modulos.querySelector(".module-availability")),
+            trust: checkForExistence(modulos.querySelector(".module-trust")).match(/Trust:\s*(\d+)/)?.[1],
+            availability: checkForExistence(modulos.querySelector(".module-availability")) === "Availability: na" ? "Global" : "CN",
             levels: [moduleData]
           });
         }
@@ -179,9 +173,7 @@ export const getStaticInformation = async (url: string) => {
     const infoKeys = operator.querySelectorAll('.profile-info-table > table:nth-child(2) th, .profile-info-table > table:nth-child(4) th').map(th => checkForExistence(th).replaceAll(' ', '_').toLowerCase());
     const infoBody = operator.querySelectorAll('.profile-info-table > table:nth-child(2) td, .profile-info-table > table:nth-child(4) td').map(td => checkForExistence(td));
     infoKeys.forEach((key, i) => characterInfo[key] = infoBody[i]);
-    if (!characterInfo.hasOwnProperty('height')) {
-      characterInfo['Height'] = 'No Known Height';
-    }
+    if (!characterInfo.hasOwnProperty('height')) characterInfo['Height'] = 'No Known Height';
 
     const affiliations: string[] = operator.querySelectorAll('.group-name > a')?.map(affiliation => checkForExistence(affiliation));
 
@@ -190,7 +182,7 @@ export const getStaticInformation = async (url: string) => {
     const voiceLinesContent = operator.querySelectorAll('.voice-lines-table td').map(td => checkForExistence(td));
     voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
-    const operatorArt: { [key: string]: string } = {};
+    const operatorArt: { [key: string]: string | { link: string, line: string } } = {};
     const imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!);
     operatorArt['Base'] = imgLinkList[0];
     imgLinkList.shift()
@@ -203,21 +195,22 @@ export const getStaticInformation = async (url: string) => {
         const test = await fetch('https://gamepress.gg/' + imgLinkList[i]);
         const skin = parse(await test.text());
         const name = checkForExistence(skin.querySelector('#page-title > h1'));
-        operatorArt[name] = imgLinkList[i];
+        const line = checkForExistence(skin.querySelector('.skin-series a'));
+        operatorArt[name] = { link: 'https://gamepress.gg/' + imgLinkList[i], line: line };
       }
     }
-    // const costs = await getCosts(url);
-    // const statistics = await getStatistics(url);
+    const costs = await getCosts(url);
+    const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
     const availability = checkForExistence(operator.querySelector('.obtain-approach-table'));
     const dict = {
       "_id": gamepressname,
-      "name": checkForExistence(name),
+      "name": name,
       "rarity": rarity,
-      "alter": checkForExistence(alter),
-      "artist": checkForExistence(artist),
-      "va": checkForExistence(jpva),
-      "biography": checkForExistence(biography),
+      "alter": alter,
+      "artist": artist,
+      "va": jpva,
+      "biography": biography,
       "description": descriptionArr[1] as string,
       "quote": descriptionArr[2] as string,
       "voicelines": voiceLines,
@@ -225,9 +218,9 @@ export const getStaticInformation = async (url: string) => {
       "affiliation": affiliations,
       "class": uniqueClasses,
       "tags": recruitment,
-      // "statistics": statistics,
+      "statistics": statistics,
       "trait": descriptionArr[0] as string,
-      // "costs": costs,
+      "costs": costs,
       "potential": potential,
       "trust": trust,
       "talents": talent,
@@ -240,8 +233,7 @@ export const getStaticInformation = async (url: string) => {
       "availability": availability.includes('N/A') ? "CN only" : "Global",
       "url": url,
     }
-    console.log(dict)
-    // return dict;
+    return dict;
   // } catch (err: any) {
   //   throw new Error(err.message);
   // }
