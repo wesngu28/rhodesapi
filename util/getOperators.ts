@@ -13,7 +13,9 @@ export async function requester() {
       .replaceAll('.', '')
       .replaceAll(' ', '-')
       .replaceAll('---', '-')
-      .replaceAll('--', '-');
+      .replaceAll('--', '-')
+      .replaceAll('ł', 'l')
+      .replaceAll('ë', 'e')
     return name
   });
   const operatorJSON = JSON.stringify(data, null, '\t');

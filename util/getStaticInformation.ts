@@ -45,13 +45,13 @@ export const getStaticInformation = async (url: string) => {
 
     const classArr = operator.querySelectorAll('.profession-title').map(clas => clas.textContent);
     const [primaryClass, secondaryClass] = classArr[1] ? classArr[1].includes('/') ? classArr[1].split(' / ') : [classArr[1]] : [];
-    const uniqueClasses = [...new Set([classArr[0].replace(/\n/g, '')])];
+    const uniqueClasses = classArr[0] ? [...new Set([classArr[0].replace(/\n/g, '')])] : [];
     if (primaryClass) uniqueClasses.push(primaryClass.replace(/\n/g, ''))
     if (secondaryClass) uniqueClasses.push(secondaryClass.replace(/\n/g, ''))
 
     const recruitment = operator.querySelectorAll('.tag-title').map(tag => tag.textContent.replace(/\n/g, ''))
     recruitment.pop();
-    recruitment.push(classArr[0].replace(/\n/g, ''));
+    if (classArr[0]) recruitment.push(classArr[0].replace(/\n/g, ''));
 
     const obtainable = operator.querySelectorAll('.obtain-approach-table span').map(existence => existence.textContent)
     if(obtainable[1] === '(LIMITED)'){
