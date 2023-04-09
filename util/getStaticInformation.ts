@@ -2,15 +2,13 @@ import fetch from 'node-fetch';
 import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { sleep } from './sleep';
-import { operatorInterface } from '../models/operatorModel';
 import { HTMLElement, parse } from 'node-html-parser';
-import { getRange } from './getRange';
 
 export const getStaticInformation = async (url: string) => {
   // try {
     const operatorHTML = await fetch(url);
     const operator = parse(await operatorHTML.text());
-    // await sleep(7500);
+    await sleep(7500);
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
     const name = checkForExistence(operator.querySelector('#page-title > h1'));
@@ -46,7 +44,7 @@ export const getStaticInformation = async (url: string) => {
     const jpva = checkForExistence(operator.querySelector('.profile-info-table > table > tr:nth-child(2) > td > a'));
 
     const classArr = operator.querySelectorAll('.profession-title').map(clas => clas.textContent);
-    const [primaryClass, secondaryClass] = classArr[1].includes('/') ? classArr[1].split(' / ') : [classArr[1]];
+    const [primaryClass, secondaryClass] = classArr[1] ? classArr[1].includes('/') ? classArr[1].split(' / ') : [classArr[1]] : [];
     const uniqueClasses = [...new Set([classArr[0].replace(/\n/g, '')])];
     if (primaryClass) uniqueClasses.push(primaryClass.replace(/\n/g, ''))
     if (secondaryClass) uniqueClasses.push(secondaryClass.replace(/\n/g, ''))
@@ -75,43 +73,31 @@ export const getStaticInformation = async (url: string) => {
       });
     })
 
-    const talent: Array<{name: string, value: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number}> = operator
-      .querySelectorAll('.talent-child').map(cell => {
+    const talent: Array<{name: string, variation: Array<{description: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number}>}> = []
+    operator.querySelectorAll('.talent-child').forEach(cell => {
         let eliteImage = cell.querySelector('.elite-level img')
         let potential = cell.querySelector('.potential-level img')
         let loc = potential?.getAttribute("src")?.indexOf(".png")
-        return({
-          "name": checkForExistence(cell.querySelector('.talent-title')),
-          "value": checkForExistence(cell.querySelector('.talent-description')),
-          "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
-          "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
-        });
+        let name = checkForExistence(cell.querySelector('.talent-title'))
+        if(!talent.find(talents => talents.hasOwnProperty("name"))) {
+          let currentVariation = {
+            "description": checkForExistence(cell.querySelector('.talent-description')),
+            "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
+            "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
+          }
+          talent.push({ name, variation: [currentVariation] })
+        } else {
+          const skill = talent.find(talents => talents.hasOwnProperty("name"))!;
+          skill.variation.push({
+            "description": checkForExistence(cell.querySelector('.talent-description')),
+            "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
+            "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
+          })
+        }
     })
-
-    operator.querySelectorAll('.talent-cell .paragraph--type--module-talent-attributes').forEach(cell => {
-      let elitePotImages = cell.querySelectorAll('.module-unlock-phase img')
-      let loc = elitePotImages[1]?.getAttribute("src")?.indexOf(".png")
-      talent.push({
-        "name": checkForExistence(cell.querySelector('.module-talent-name a')),
-        "value": checkForExistence(cell.querySelector('.module-talent-row-2')),
-        "elite": elitePotImages[0] && elitePotImages[0].getAttribute("src")?.includes('2.png') ? "E2" : "E1",
-        "potential": elitePotImages[1] && loc ? elitePotImages[1]!.getAttribute("src")![loc - 1] : "0",
-        "moduleName": checkForExistence(cell.querySelector(".module-upgrade-from a"))
-      });
-    })
-
+Array<{name: string, variation: Array<{value: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number}>}>
     const skillsTabs = operator.querySelectorAll('.skill-cell').map((skill, i) => {
       let name = checkForExistence(skill.querySelector(".skill-title-cell a:last-child"))
-      let skillDescription = skill.querySelector('.skill-description > .skill-upgrade-tab-1')?.innerHTML.replace(/<br/g, '')!;
-      skillDescription = skillDescription.replace(/<span[^>]*>/gi, "").replace(/<\/span>/gi, "").replaceAll('>', '. ')
-      const initialSkillValues = operator.querySelectorAll(`#skill-tab-${1 + i} .skill-upgrade-tab-1 .skill-description-value`).map(skill => checkForExistence(skill))
-      const finalSkillValues: string[] = operator.querySelectorAll(`#skill-tab-${1 + i} .skill-description > .skill-upgrade-tab-10 .skill-description-value`).map(skill => checkForExistence(skill))
-      let attemptMashDesc = ""
-      for(let i = 0; i < initialSkillValues.length; i++) {
-        if(initialSkillValues[i] !== finalSkillValues[i]) {
-          attemptMashDesc = skillDescription.replace(initialSkillValues[i], `${initialSkillValues[i]}-${finalSkillValues[i]}`)
-        }
-      }
       const rangeBoxes = skill.querySelectorAll('.skill-range-box .range-box');
       const skillRanges = rangeBoxes.map(boxes => {
         const currCells = boxes.querySelectorAll('.range-cell')
@@ -123,14 +109,18 @@ export const getStaticInformation = async (url: string) => {
       })
       return {
         name: name.substring(name.indexOf(' ', name.indexOf(':')) + 1),
-        spCost: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`))),
-        initialSP: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.initial-sp> .skill-upgrade-tab-${i}`))),
+        levelVariations: Array.from({ length: 10 }, (_, i) => i + 1).map(i => {
+          return {
+            level: i < 8 ? i : i === 8 ? "M1" : i === 9 ? "M2" : "M3",
+            description: checkForExistence(skill.querySelector(`.skill-description > .skill-upgrade-tab-${i}`)),
+            spCost: checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`)),
+            initialSP: checkForExistence(skill.querySelector(`.initial-sp> .skill-upgrade-tab-${i}`)),
+            duration: checkForExistence(skill.querySelector(`.skill-duration> .skill-upgrade-tab-${i}`)),
+            range: skillRanges[i] ? skillRanges[i] : "Skill does not modify range"
+          }
+        }),
         skillCharge: checkForExistence(skill.querySelector('.sp-charge-type a')),
         skillActivation: checkForExistence(skill.querySelector('.skill-activation a')),
-        duration: Array.from({ length: 10 }, (_, i) => i + 1).map(i => checkForExistence(skill.querySelector(`.skill-duration> .skill-upgrade-tab-${i}`))),
-        range: skillRanges[0] ? skillRanges : "Skill does not modify range",
-        skillDescription: skillDescription,
-        skillProgressDescription: attemptMashDesc
       }
 
     })
@@ -224,11 +214,11 @@ export const getStaticInformation = async (url: string) => {
         operatorArt[name] = { link: 'https://gamepress.gg/' + imgLinkList[i], line: line };
       }
     }
-    // const costs = await getCosts(url);
-    // const statistics = await getStatistics(url);
+    const costs = await getCosts(url);
+    const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
     const availability = checkForExistence(operator.querySelector('.obtain-approach-table'));
-    const dict = {
+    return {
       "_id": gamepressname,
       "name": name,
       "range": cells,
@@ -244,8 +234,8 @@ export const getStaticInformation = async (url: string) => {
       "affiliation": affiliations,
       "class": uniqueClasses,
       "tags": recruitment,
-      // "statistics": statistics,
-      // "costs": costs,
+      "statistics": statistics,
+      "costs": costs,
       "trait": descriptionArr[0] as string,
       "potential": potential,
       "trust": trust,
@@ -258,14 +248,11 @@ export const getStaticInformation = async (url: string) => {
       "art": operatorArt,
       "availability": availability.includes('N/A') ? "CN only" : "Global",
       "url": url,
-    }
-    return dict;
+    };
   // } catch (err: any) {
   //   throw new Error(err.message);
   // }
 }
-
-// getStaticInformation("https://gamepress.gg/arknights/operator/schwarz")
 
 function checkForExistence(field: any): string {
   if (!field || !field.textContent) {
