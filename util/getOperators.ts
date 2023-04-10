@@ -1,5 +1,3 @@
-import { load } from 'cheerio';
-import fs from 'fs';
 import parse from 'node-html-parser';
 
 export async function requester() {
@@ -18,8 +16,5 @@ export async function requester() {
       .replaceAll('ë', 'e')
     return name
   });
-  const operatorJSON = JSON.stringify(data, null, '\t');
-  fs.writeFile('./operators.json',  operatorJSON, err => {
-  if (err) { console.log("Error writing to file.")}});
   return data;
 }

@@ -63,13 +63,9 @@ export interface operatorInterface {
   dateAdded?: Date;
 }
 
-interface OperatorMethods {
-  checkDate(): Boolean;
-}
+type OperatorModel = mongoose.Model<operatorInterface, {}>;
 
-type OperatorModel = mongoose.Model<operatorInterface, {}, OperatorMethods>;
-
-const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel, OperatorMethods>({
+const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel>({
     _id: String,
     name: String,
     range: [{}],
@@ -107,17 +103,6 @@ const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel, Ope
     collation: { locale: "en", strength: 2 },
   }
 );
-
-OperatorSchema.method("checkDate", function checkDate() {
-  const date1 = this.dateAdded.getTime();
-  const date2 = Date.now();
-  const timeDiff = (date2 - date1) / (1000 * 3600 * 24);
-  if (timeDiff > 7) {
-    return true;
-  } else {
-    return false;
-  }
-});
 
 export default mongoose.model<operatorInterface, OperatorModel>(
   "Operator",
