@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development nodemon server.ts",
+    "dev": "nodemon server.ts",
     "start": "node dist/server.js",
     "build": "tsc",
     "watch-node": "nodemon dist/server.js",
@@ -24,7 +24,7 @@
     "ioredis": "^5.2.4",
     "mongoose": "^6.6.0",
     "node-fetch": "^2.6.7",
-    "node-html-parser": "^6.0.0"
+    "node-html-parser": "^6.1.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",

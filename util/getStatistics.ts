@@ -1,13 +1,6 @@
 import fetch from 'node-fetch';
 import { parse } from 'node-html-parser'
 
-type stats = {
-  base: {},
-  e0max: {},
-  e1max?: {},
-  e2max?: {},
-}
-
 export const getStatistics = async (url: string) => {
   try{
     const response = await fetch(url);
@@ -52,9 +45,7 @@ export const getStatistics = async (url: string) => {
         formattedText = formattedText.substring(2, formattedText.length)
         if (formattedText.includes('e1')) {
           formattedText = formattedText.replace(formattedText.substring(0, formattedText.indexOf('Max')), '')
-          console.log(formattedText)
           let ne = formattedText.substring(formattedText.indexOf('Max') + 1, formattedText.indexOf('}') + 1)
-          console.log(ne)
           formattedText = formattedText.replace(ne, '')
           const [, ...rest] = ne.split('\n')
           const statDict = {
@@ -68,9 +59,7 @@ export const getStatistics = async (url: string) => {
         }
         if (formattedText.includes('e2')) {
           formattedText = formattedText.replace(formattedText.substring(0, formattedText.indexOf('Max')), '')
-          console.log(formattedText)
           let ne = formattedText.substring(formattedText.indexOf('Max') + 1, formattedText.indexOf('}') + 1)
-          console.log(ne)
           formattedText = formattedText.replace(ne, '')
           const [, ...rest] = ne.split('\n')
           const statDict = {
@@ -84,25 +73,19 @@ export const getStatistics = async (url: string) => {
         }
       }
     }
-    const statistics: stats = {
+    const statistics: {[key: string]: { hp: string; atk: string; def: string; block: string; }} = {
       base: stats[0],
       e0max: stats[1]
     }
-    if(stats[2].hp) {
-      statistics['e1max'] = stats[2]
-    }
-    if(stats[3].hp) {
-      statistics['e2max'] = stats[3]
-    }
+    if(stats[2].hp) statistics['e1max'] = stats[2]
+    if(stats[3].hp) statistics['e2max'] = stats[3]
     return statistics;
   } catch (err) {
-    return (
-      {
+    return ({
         base: {error: "something went wrong, most likely operator does not have stats yet on gp"},
         e0max: {error: "something went wrong, most likely operator does not have stats yet on gp"},
         e1max: {error: "something went wrong, most likely operator does not have stats yet on gp"},
         e2max: {error: "something went wrong, most likely operator does not have stats yet on gp"},
-      }
-    )
+    })
   }
 }
