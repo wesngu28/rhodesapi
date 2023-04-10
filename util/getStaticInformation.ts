@@ -5,7 +5,7 @@ import { sleep } from './sleep';
 import { HTMLElement, parse } from 'node-html-parser';
 
 export const getStaticInformation = async (url: string) => {
-  // try {
+  try {
     const operatorHTML = await fetch(url);
     const operator = parse(await operatorHTML.text());
     await sleep(7500);
@@ -217,7 +217,11 @@ export const getStaticInformation = async (url: string) => {
     const costs = await getCosts(url);
     const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
-    const availability = checkForExistence(operator.querySelector('.obtain-approach-table'));
+    const availability = operator.querySelectorAll('.obtain-approach-table table');
+    const releaseDates = {
+      cn: checkForExistence(availability[1].querySelectorAll('td')[0]),
+      global: checkForExistence(availability[1].querySelectorAll('td')[1])
+    }
     return {
       "_id": gamepressname,
       "name": name,
@@ -246,12 +250,13 @@ export const getStaticInformation = async (url: string) => {
       "headhunting": obtainable[0] as string,
       "recruitable": obtainable[1] as string,
       "art": operatorArt,
-      "availability": availability.includes('N/A') ? "CN only" : "Global",
+      "availability": checkForExistence(availability[0]).includes('N/A') ? "CN only" : "Global",
+      "release_dates": releaseDates,
       "url": url,
     };
-  // } catch (err: any) {
-  //   throw new Error(err.message);
-  // }
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
 }
 
 function checkForExistence(field: any): string {

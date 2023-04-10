@@ -4,7 +4,7 @@ export const excludeKeys = (keys: string) => {
   const fieldsObject = excludedFields.reduce((fieldsToExclude, field) => {
     fieldsToExclude[field] = 0;
     return fieldsToExclude;
-  }, {} as { [key: string]: number });
+  }, { date_added: 0, __v: 0 } as { [key: string]: number });
 
   return fieldsObject;
 }

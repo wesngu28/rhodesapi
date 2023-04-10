@@ -59,6 +59,7 @@ export interface operatorInterface {
         };
   };
   availability: string;
+  release_dates: { cn: string; global: string;}
   url: string;
   dateAdded?: Date;
 }
@@ -94,6 +95,7 @@ const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel>({
     recruitable: String,
     art: {},
     availability: String,
+    release_dates: {},
     url: String,
     dateAdded: {
       type: Date,
