@@ -22,7 +22,6 @@ export const recruitment = async (req: FastifyRequest<{Querystring: Params}>, re
         if(tag3) {
           findOperators = await Operator.find( { tags: { $all: [tag1, tag2, tag3] }, recruitable :"Yes" }, excludeKeys(exclude) );
         }
-        console.log(findOperators)
         if (findOperators[0]) {
           return findOperators
         }
