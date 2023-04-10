@@ -8,7 +8,7 @@ export const getArt = async (req: FastifyRequest<{Params: {name: string}}>, res:
     const art = await getOrSetToCache(`e2?name=${name}`, async ()=> {
       const findOperator = await Operator.findOne({ name: name }, { art : 1 });
       if (findOperator) {
-        const skins: {[key: string] : string} = findOperator['art'];
+        const skins = findOperator['art'];
         return skins;
       }
       res.status(404).send( { error: 'Specified operator does not exist.' } );
@@ -52,7 +52,7 @@ export const getSkins = async (req: FastifyRequest<{Params: {name: string}}>, re
     const matchSkins = await getOrSetToCache(`skins?name=${name}`, async ()=> {
       const findOperator = await Operator.findOne({ name: name }, { art : 1 });
       if (findOperator) {
-        const skins: {[key: string] : string} = findOperator['art'];
+        const skins = findOperator['art'];
         delete skins['Base'];
         delete skins['E2'];
         if(Object.keys(skins).length === 0) {

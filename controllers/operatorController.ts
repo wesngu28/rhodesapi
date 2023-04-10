@@ -4,11 +4,14 @@ import { getStaticInformation } from '../util/getStaticInformation';
 import { getOrSetToCache } from '../middleware/getOrSetToCache';
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { RedisClient } from "../models/redis"
+import { excludeKeys } from '../middleware/excludeKeys';
 
-export const getAllOperators = async (req: FastifyRequest, res: FastifyReply) => {
+export const getAllOperators = async (req: FastifyRequest<{Querystring: {"exclude": string}}>, res: FastifyReply) => {
   try {
-    const operators = await getOrSetToCache(`operator`, async ()=> {
-      const allOperators = await Operator.find();
+    const { exclude } = req.query
+
+    const operators = await getOrSetToCache(`operator${exclude}`, async ()=> {
+      const allOperators = await Operator.find({}, excludeKeys(exclude));
       return allOperators;
     });
     res.status(200).send(operators);
@@ -17,15 +20,19 @@ export const getAllOperators = async (req: FastifyRequest, res: FastifyReply) =>
   }
 }
 
-export const getOperator = async (req: FastifyRequest<{Params: {name: string}}>, res: FastifyReply) => {
+export const getOperator = async (req: FastifyRequest<{Params: {name: string}, Querystring: {"exclude": string}}>, res: FastifyReply) => {
   try {
     const name = req.params.name;
-    const operator = await getOrSetToCache(`operator?name=${name}`, async ()=> {
+    const { exclude } = req.query
+    const operator = await getOrSetToCache(`operator?name=${name},exclude=${exclude}`, async ()=> {
       let nameQuery = name.replaceAll('-', ' ');
       nameQuery = name.replaceAll('_', ' ');
-      const findOperator = await Operator.findOne({
-        $or: [{ name: nameQuery }, { _id: name }],
-      })
+      const findOperator = await Operator.findOne(
+        {
+          $or: [{ name: nameQuery }, { _id: name }],
+        },
+        excludeKeys(exclude)
+      );
       if(findOperator) {
         return findOperator;
       } else {
@@ -73,34 +80,7 @@ export const updateOperator = async (req: FastifyRequest<{Params: {name: string}
       const updateInfo = await getStaticInformation('https://gamepress.gg/arknights/operator/' + name);
       const updateOperator = await Operator.replaceOne({
         name: updateInfo.name
-      }, {
-        "name": updateInfo.name,
-        "rarity": updateInfo.rarity,
-        "alter": updateInfo.alter,
-        "artist": updateInfo.artist,
-        "va": updateInfo.va,
-        "biography": updateInfo.biography,
-        "description": updateInfo.description,
-        "quote": updateInfo.quote,
-        "voicelines": updateInfo.voicelines,
-        "lore": updateInfo.lore,
-        "affiliation": updateInfo.affiliation,
-        "class": updateInfo.class,
-        "tags": updateInfo.tags,
-        "statistics": updateInfo.statistics,
-        "trait": updateInfo.trait,
-        "costs": updateInfo.costs,
-        "potential": updateInfo.potential,
-        "trust": updateInfo.trust,
-        "talents": updateInfo.talents,
-        "skills": updateInfo.skills,
-        "module": updateInfo.module,
-        "headhunting": updateInfo.headhunting,
-        "recruitable": updateInfo.recruitable,
-        "art": updateInfo.art,
-        "availability": updateInfo.availability,
-        "url": updateInfo.url
-      });
+      }, updateInfo);
       res.status(200).send(updateOperator);
       await RedisClient.del(`operator?name=${name}`)
     } else {
