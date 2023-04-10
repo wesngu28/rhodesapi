@@ -25,9 +25,15 @@ export const searchOperators = async (req: FastifyRequest<{Querystring: {[key: s
         return { ...acc, [`lore.${key}`]: Object.values(req.query)[i] };
       }
       if (key === "alter") {
+        if (Object.values(req.query)[i]) {
+          return { ...acc, alter: "Not provided" };
+        }
         return { ...acc, alter: { $ne: "Not provided" } };
       }
       if (key === "module") {
+        if (Object.values(req.query)[i]) {
+          return { ...acc, module: { $exists: false, $not: { $elemMatch: { $ne: {} } } } };
+        }
         return { ...acc, module: { $exists: true, $elemMatch: { $ne: {} } } };
       }
       if (key === "building") {

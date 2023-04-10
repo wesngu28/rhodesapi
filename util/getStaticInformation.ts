@@ -95,7 +95,7 @@ export const getStaticInformation = async (url: string) => {
           })
         }
     })
-Array<{name: string, variation: Array<{value: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number}>}>
+
     const skillsTabs = operator.querySelectorAll('.skill-cell').map((skill, i) => {
       let name = checkForExistence(skill.querySelector(".skill-title-cell a:last-child"))
       const rangeBoxes = skill.querySelectorAll('.skill-range-box .range-box');
