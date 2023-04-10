@@ -26,7 +26,7 @@ const start = async () => {
     await neuralConnect();
     await app.register(cors)
     const PORT = process.env.PORT || 5219;
-    await app.listen({ port: Number(PORT) })
+    await app.listen({ port: Number(PORT), host: '0.0.0.0' })
   } catch (err) {
     app.log.error(err)
     process.exit(1)
