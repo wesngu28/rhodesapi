@@ -6,7 +6,7 @@ import { excludeKeys } from '../middleware/excludeKeys';
 export const getAllOperators = async (req: FastifyRequest<{Querystring: {"exclude": string}}>, res: FastifyReply) => {
   try {
     const { exclude } = req.query
-    const operators = await getOrSetToCache(`operator${exclude}`, async ()=> {
+    const operators = await getOrSetToCache(`operator${exclude ? exclude : ""}`, async ()=> {
       const allOperators = await Operator.find({}, excludeKeys(exclude));
       return allOperators;
     });
@@ -20,7 +20,7 @@ export const getOperator = async (req: FastifyRequest<{Params: {name: string}, Q
   try {
     const name = req.params.name;
     const { exclude } = req.query
-    const operator = await getOrSetToCache(`operator?name=${name},exclude=${exclude}`, async ()=> {
+    const operator = await getOrSetToCache(`operator?name=${name}${exclude ? `,exclude=${exclude}` : ""}`, async ()=> {
       let nameQuery = name.replaceAll('-', ' ');
       nameQuery = name.replaceAll('_', ' ');
       const findOperator = await Operator.findOne(

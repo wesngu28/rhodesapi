@@ -45,7 +45,7 @@ export const searchOperators = async (req: FastifyRequest<{Querystring: {[key: s
       return acc;
     }, {});
 
-    const matchOperators = await getOrSetToCache(`search?queries=${JSON.stringify(queries)}${exclude}`, async ()=> {
+    const matchOperators = await getOrSetToCache(`search?queries=${JSON.stringify(queries)}${exclude ? exclude : ""}`, async ()=> {
       const findOperator = await Operator.find(queries, excludeKeys(exclude));
       if(findOperator.length === await Operator.countDocuments({}).exec()){
         reply.status(400).send( { error: 'Invalid parameter specified!' } );

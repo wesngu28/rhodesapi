@@ -10,7 +10,13 @@ export const getArt = async (req: FastifyRequest<{Params: {name: string}, Querys
       const findOperator = await Operator.findOne({ name: name }, { art : 1 });
       if (findOperator) {
         const skins = findOperator['art'];
-        return e2 ? skins["E2"] : skins;
+        if (e2) {
+          let e2 = skins.filter(skin => skin.name === "E2");
+          if (e2) {
+            return e2[0]
+          }
+        }
+        return skins;
       }
       res.status(404).send( { error: 'Specified operator does not exist.' } );
       return;

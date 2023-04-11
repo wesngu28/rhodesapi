@@ -1,14 +1,16 @@
 import fetch from 'node-fetch';
 import { parse } from 'node-html-parser'
-
 const BASE = 'https://gamepress.gg/'
 
 export const getCosts = async (url: string) => {
-  try {
+    const itemRes = await fetch(
+      "https://raw.githubusercontent.com/wesngu28/rhodesapi/main/util/itemMapping.json"
+    )
+    const itemMap: {[key: string]: string} = await itemRes.json()
     const response = await fetch(url);
     const text = await response.text();
     const html = parse(text);
-    let costList: {[key: string]: number }= {};
+    let costList: Array<{name: string, amount: number}> = [];
     let onetoseven = html.querySelectorAll('.skill-material-cost17 a');
     let onetosevenqty = html.querySelectorAll('.skill-material-cost17 .material-quantity');
     costList = getItemsAndQuantity(costList, onetoseven, onetosevenqty);
@@ -20,32 +22,36 @@ export const getCosts = async (url: string) => {
     costList = getItemsAndQuantity(costList, rankcost, rankcostqty);
     const newKeys: string[] = [];
     for (let i = 0; i < Object.keys(costList).length; i++) {
-        const test = await fetch(Object.keys(costList)[i]);
-        const text = await test.text();
-        const html = parse(text);
-        const name = html.querySelector('#page-title > h1')!.text;
-        newKeys.push(name)
+        if (Object.values(itemMap).includes(Object.values(costList)[i].name)) {
+          const matchingKey = Object.keys(itemMap).find(key => itemMap[key] === Object.values(costList)[i].name);
+          newKeys.push(matchingKey!)
+        } else {
+          const test = await fetch(Object.keys(costList)[i]);
+          const text = await test.text();
+          const html = parse(text);
+          const name = html.querySelector('#page-title > h1')!.text;
+          newKeys.push(name)
+        }
     }
     Object.keys(costList).forEach((key, idx) => {
-        costList[newKeys[idx]] = costList[key]
-        delete costList[key]
+        costList[idx].name = newKeys[idx]
     });
     return costList;
-  } catch (err) {
-    return ( { error: 0})
-  }
 }
 
-function getItemsAndQuantity(masterList: {[key: string]: number }, itemList: any[], qtyList: any[]) {
-  const costList = masterList;
+function getItemsAndQuantity(masterList: Array<{name: string, amount: number}>, itemList: any[], qtyList: any[]) {
   itemList.forEach((element, idx) => {
       const newElement = BASE + element.getAttribute('href');
-      if(!Object.keys(costList).includes(newElement)) {
-          costList[newElement] = Number(qtyList[idx].text.replace('x', ''))
+      if(masterList.length === 0 || !masterList.some(obj => obj.name === newElement)) {
+        masterList.push({
+          name: newElement,
+          amount: Number(qtyList[idx].text.replace('x', ''))
+        })
       } else {
-          costList[newElement] = costList[newElement] + Number(qtyList[idx].text.replace('x', ''))
+        const objIndex = masterList.findIndex(obj => obj.name === newElement);
+        masterList[objIndex].amount += Number(qtyList[idx].text.replace('x', ''));
       }
     }
   );
-  return costList;
+  return masterList;
 }

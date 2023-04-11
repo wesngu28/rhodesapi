@@ -13,7 +13,7 @@ interface Params {
 export const recruitment = async (req: FastifyRequest<{Querystring: Params}>, reply: FastifyReply) => {
   try {
     let { tag1, tag2, tag3, exclude } = req.query;
-    const recruitableOperators = await getOrSetToCache(`recruitment?${tag1}${tag2}${tag3}${exclude}`, async ()=> {
+    const recruitableOperators = await getOrSetToCache(`recruitment?${tag1}${tag2}${tag3}${exclude ? exclude : ""}`, async ()=> {
       if(tag1) {
         let findOperators = await Operator.find({ tags: tag1, recruitable: "Yes" }, excludeKeys(exclude));
         if(tag2) {
