@@ -46,6 +46,7 @@ export const authTest = async (req: FastifyRequest, res: FastifyReply) => {
     res.status(200).send({ updated: count[0], created: count[1] });
     return
   } catch (error) {
+    console.error(error)
     res.status(500).send({ message: error });
     return;
   }
