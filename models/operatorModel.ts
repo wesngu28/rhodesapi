@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 export interface operatorInterface {
   _id: string;
   name: string;
-  range: Array<{ elite: string; range: ("attackable" | "unit" | "null")[][] }>;
   rarity: number;
   alter: string;
   artist: string;
@@ -16,8 +15,10 @@ export interface operatorInterface {
   affiliation: Array<string>;
   class: Array<string>;
   tags: Array<string>;
+  range: Array<{ elite: string; range: ("attackable" | "unit" | "null")[][] }>;
   statistics:
-    | { [key: string]: { hp: string; atk: string; def: string; block: string } }
+    | { [key: string]: { hp: string; atk: string; def: string; block: string;
+        resist?: string; deploy?: string; cost?: string; interval?: string; } }
     | {
         base: { error: string };
         e0max: { error: string };
@@ -25,7 +26,7 @@ export interface operatorInterface {
         e2max: { error: string };
       };
   trait: string;
-  costs: { [key: string]: number };
+  costs: { name: string; amount: number; }[];
   potential: Array<{ name: string; value: string }>;
   trust: Array<{ name: string; value: string }>;
   talents: Array<
@@ -35,29 +36,22 @@ export interface operatorInterface {
   }>;
   skills: Array<{
     name: string;
-    levelVariations: {
+    variations: {
         level: string | number;
         description: string;
-        spCost: string;
-        initialSP: string;
+        sp_cost: string;
+        initial_sp: string;
         duration: string;
         range: string | ("attackable" | "unit" | "null")[][];
     }[];
-    skillCharge: string;
-    skillActivation: string;
+    skill_charge: string;
+    skill_activation: string;
   }>;
   module: Array<{[key: string]: any;}>;
   base: Array<{name: string; level: string; effects: string; building: string;}>;
   headhunting: string;
   recruitable: string;
-  art: {
-    [key: string]:
-      | string
-      | {
-          link: string;
-          line: string;
-        };
-  };
+  art: Array<{name: string, link: string, line?: string}>;
   availability: string;
   release_dates: { cn: string; global: string;}
   url: string;
@@ -69,7 +63,6 @@ type OperatorModel = mongoose.Model<operatorInterface, {}>;
 const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel>({
     _id: String,
     name: String,
-    range: [{}],
     rarity: Number,
     alter: String,
     artist: String,
@@ -82,9 +75,10 @@ const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel>({
     affiliation: [],
     class: [],
     tags: [],
+    range: [{}],
     statistics: {},
     trait: String,
-    costs: {},
+    costs: [{}],
     potential: [{}],
     trust: [{}],
     talents: [{}],
@@ -93,7 +87,7 @@ const OperatorSchema = new mongoose.Schema<operatorInterface, OperatorModel>({
     base: [{}],
     headhunting: String,
     recruitable: String,
-    art: {},
+    art: [{}],
     availability: String,
     release_dates: {},
     url: String,

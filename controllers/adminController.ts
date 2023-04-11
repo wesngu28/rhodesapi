@@ -20,7 +20,7 @@ export const authTest = async (req: FastifyRequest, res: FastifyReply) => {
           _id: operatorList[i],
         });
         if (findOperator) {
-        const updateInfo: operatorInterface = await getStaticInformation(`https://gamepress.gg/arknights/operator/${operatorList[i]}`);
+        const updateInfo: operatorInterface = await getStaticInformation(`https://gamepress.gg/arknights/operator/${operatorList[i]}`, findOperator.art);
           const changedFields: {[key: string]: string} = {};
           Object.keys(updateInfo).forEach((key, i) => {
             if (JSON.stringify(findOperator.get(key)) !== JSON.stringify(Object.values(updateInfo)[i])) {

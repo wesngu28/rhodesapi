@@ -3,15 +3,16 @@ import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { sleep } from './sleep';
 import { HTMLElement, parse } from 'node-html-parser';
+import { operatorInterface } from '../models/operatorModel';
 
-export const getStaticInformation = async (url: string) => {
+export const getStaticInformation = async (url: string, imgArr?: Array<{name: string, link: string, line?: string}>) => {
   try {
+    const { uploadFile } = await import('@uploadcare/upload-client')
     const operatorHTML = await fetch(url);
     const operator = parse(await operatorHTML.text());
-    await sleep(7500);
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
-    const name = checkForExistence(operator.querySelector('#page-title > h1'));
+    const operatorName = checkForExistence(operator.querySelector('#page-title > h1'));
 
     const rangeBox = operator.querySelectorAll('.operator-image .range-box');
     const cells = rangeBox.map((currRange, i) => {
@@ -109,18 +110,18 @@ export const getStaticInformation = async (url: string) => {
       })
       return {
         name: name.substring(name.indexOf(' ', name.indexOf(':')) + 1),
-        levelVariations: Array.from({ length: 10 }, (_, i) => i + 1).map(i => {
+        variations: Array.from({ length: 10 }, (_, i) => i + 1).map(i => {
           return {
             level: i < 8 ? i : i === 8 ? "M1" : i === 9 ? "M2" : "M3",
             description: checkForExistence(skill.querySelector(`.skill-description > .skill-upgrade-tab-${i}`)),
-            spCost: checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`)),
-            initialSP: checkForExistence(skill.querySelector(`.initial-sp> .skill-upgrade-tab-${i}`)),
+            sp_cost: checkForExistence(skill.querySelector(`.sp-cost> .skill-upgrade-tab-${i}`)),
+            initial_sp: checkForExistence(skill.querySelector(`.initial-sp> .skill-upgrade-tab-${i}`)),
             duration: checkForExistence(skill.querySelector(`.skill-duration> .skill-upgrade-tab-${i}`)),
             range: skillRanges[i] ? skillRanges[i] : "Skill does not modify range"
           }
         }),
-        skillCharge: checkForExistence(skill.querySelector('.sp-charge-type a')),
-        skillActivation: checkForExistence(skill.querySelector('.skill-activation a')),
+        skill_charge: checkForExistence(skill.querySelector('.sp-charge-type a')),
+        skill_activation: checkForExistence(skill.querySelector('.skill-activation a')),
       }
 
     })
@@ -142,7 +143,7 @@ export const getStaticInformation = async (url: string) => {
             "value": checkForExistence(cell.querySelector('.module-talent-row-2')),
             "elite": elitePotImages[0] && elitePotImages[0].getAttribute("src")?.includes('2.png') ? "E2" : "E1",
             "potential": elitePotImages[1] && loc ? elitePotImages[1]!.getAttribute("src")![loc - 1] : "0",
-            "moduleLevel": i
+            "module_level": i
           });
         })
         const unlockCriteria = [...new Set(
@@ -156,7 +157,7 @@ export const getStaticInformation = async (url: string) => {
           level: i,
           trait: checkForExistence(modulos.querySelector('.module-row-2')).replace('Equip Trait', ''),
           attributes: moduleAttribute,
-          talentChanges: talent,
+          talent_changes: talent,
           unlock: unlockCriteria
         };
         const existingModuleIndex = modules.findIndex((moduler) => moduler.name === moduleName);
@@ -167,7 +168,7 @@ export const getStaticInformation = async (url: string) => {
           modules.push({
             name: moduleName,
             trust: checkForExistence(modulos.querySelector(".module-trust")).match(/Trust:\s*(\d+)/)?.[1],
-            availability: checkForExistence(modulos.querySelector(".module-availability")) === "Availability: na" ? "Global" : "CN",
+            availability: checkForExistence(modulos.querySelector(".module-availability")).includes("Availability: na") ? "Global" : "CN",
             levels: [moduleData]
           });
         }
@@ -197,13 +198,41 @@ export const getStaticInformation = async (url: string) => {
     const voiceLinesContent = operator.querySelectorAll('.voice-lines-table td').map(td => checkForExistence(td));
     voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
-    const operatorArt: { [key: string]: string | { link: string, line: string } } = {};
-    const imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!);
-    operatorArt['Base'] = imgLinkList[0];
-    imgLinkList.shift()
+    const operatorArt: Array<{name: string, link: string, line?: string}> = [];
+    const imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!)
+    if (imgArr && imgArr[0].link === imgLinkList[0]) {
+      operatorArt.push({ name: 'Base', link: imgArr[0].link });
+    } else {
+      let file = await uploadFile(imgLinkList[0], {
+        publicKey: 'e4e7900bd16b1b5b3363',
+        store: 'auto',
+        fileName: `${operatorName}Base`
+      })
+      operatorArt.push({ name: 'Base', link: file.uuid });
+    }
     if (rarity > 2) {
-      imgLinkList.shift()
-      operatorArt['E2'] = imgLinkList[0]
+      if (imgArr && imgArr[1].link === imgLinkList[1]) {
+        operatorArt.push({ name: 'E1', link: imgArr[1].link });
+      } else {
+        let file = await uploadFile(imgLinkList[1], {
+          publicKey: 'e4e7900bd16b1b5b3363',
+          store: 'auto',
+          fileName: `${operatorName}E1`
+        })
+        operatorArt.push({ name: 'E1', link: file.uuid });
+      }
+    }
+    if (rarity > 3) {
+      if (imgArr && imgArr[2].link === imgLinkList[2]) {
+        operatorArt.push({ name: 'E2', link: imgArr[2].link });
+      } else {
+        let file = await uploadFile(imgLinkList[1], {
+          publicKey: 'e4e7900bd16b1b5b3363',
+          store: 'auto',
+          fileName: `${operatorName}E2`
+        })
+        operatorArt.push({ name: 'E2', link: file.uuid });
+      }
     }
     for (let i = 0; i < imgLinkList.length; i++) {
       if (!imgLinkList[i].includes('png')) {
@@ -211,9 +240,21 @@ export const getStaticInformation = async (url: string) => {
         const skin = parse(await test.text());
         const name = checkForExistence(skin.querySelector('#page-title > h1'));
         const line = checkForExistence(skin.querySelector('.skin-series a'));
-        operatorArt[name] = { link: 'https://gamepress.gg/' + imgLinkList[i], line: line };
+        const img = skin.querySelector('.operator-image a')?.getAttribute('href')!
+        operatorArt.push({ name, link: img, line });
+        if (imgArr && imgArr[i].link === imgLinkList[i]) {
+          operatorArt.push({ name, link: imgArr[i].link, line });
+        } else {
+          let file = await uploadFile(imgLinkList[i], {
+            publicKey: 'e4e7900bd16b1b5b3363',
+            store: 'auto',
+            fileName: `${operatorName}${name}`
+          })
+          operatorArt.push({ name, link: file.uuid, line});
+        }
       }
     }
+
     const costs = await getCosts(url);
     const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
@@ -224,8 +265,7 @@ export const getStaticInformation = async (url: string) => {
     }
     return {
       "_id": gamepressname,
-      "name": name,
-      "range": cells,
+      "name": operatorName,
       "rarity": rarity,
       "alter": alter,
       "artist": artist,
@@ -238,6 +278,7 @@ export const getStaticInformation = async (url: string) => {
       "affiliation": affiliations,
       "class": uniqueClasses,
       "tags": recruitment,
+      "range": cells,
       "statistics": statistics,
       "costs": costs,
       "trait": descriptionArr[0] as string,
@@ -253,7 +294,7 @@ export const getStaticInformation = async (url: string) => {
       "availability": checkForExistence(availability[0]).includes('N/A') ? "CN only" : "Global",
       "release_dates": releaseDates,
       "url": url,
-    };
+    } as operatorInterface;
   } catch (err: any) {
     throw new Error(err.message);
   }
