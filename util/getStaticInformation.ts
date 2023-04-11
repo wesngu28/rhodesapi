@@ -210,7 +210,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
         store: 'auto',
         fileName: `${operatorName}Base`
       })
-      operatorArt.push({ name: 'Base', link: file.uuid });
+      operatorArt.push({ name: 'Base', link: `https://ucarecdn.com/${file.uuid}` });
     }
     if (rarity > 2) {
       if (imgArr && imgArr[1].link === imgLinkList[1]) {
@@ -221,7 +221,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
           store: 'auto',
           fileName: `${operatorName}E1`
         })
-        operatorArt.push({ name: 'E1', link: file.uuid });
+        operatorArt.push({ name: 'E1', link: `https://ucarecdn.com/${file.uuid}` });
       }
     }
     if (rarity > 3) {
@@ -233,7 +233,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
           store: 'auto',
           fileName: `${operatorName}E2`
         })
-        operatorArt.push({ name: 'E2', link: file.uuid });
+        operatorArt.push({ name: 'E2', link: `https://ucarecdn.com/${file.uuid}` });
       }
     }
     for (let i = 0; i < imgLinkList.length; i++) {
@@ -252,7 +252,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
             store: 'auto',
             fileName: `${operatorName}${name}`
           })
-          operatorArt.push({ name, link: file.uuid, line});
+          operatorArt.push({ name, link: `https://ucarecdn.com/${file.uuid}`, line});
         }
       }
     }
