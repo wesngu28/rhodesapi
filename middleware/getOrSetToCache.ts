@@ -9,7 +9,7 @@ export async function getOrSetToCache(key: string, callback: Function): Promise<
     return;
   } else {
     RedisClient.set(key, JSON.stringify(queryResult));
-    RedisClient.expire(key, 86400000);
+    RedisClient.expire(key, 86400);
     return queryResult;
   }
 }

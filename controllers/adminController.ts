@@ -16,11 +16,9 @@ export const authTest = async (req: FastifyRequest, res: FastifyReply) => {
     if (token === process.env.ADMIN_TOKEN) {
       const operatorList = await requester();
       for (let i = 0; i < 1; i++) {
-        const findOperator = await Operator.findOne({
-          _id: operatorList[i],
-        });
+        const findOperator = await Operator.findOne({_id: operatorList[i],});
         if (findOperator) {
-        const updateInfo: operatorInterface = await getStaticInformation(`https://gamepress.gg/arknights/operator/${operatorList[i]}`, findOperator.art);
+          const updateInfo: operatorInterface = await getStaticInformation(`https://gamepress.gg/arknights/operator/${operatorList[i]}`, findOperator.art);
           const changedFields: {[key: string]: string} = {};
           Object.keys(updateInfo).forEach((key, i) => {
             if (JSON.stringify(findOperator.get(key)) !== JSON.stringify(Object.values(updateInfo)[i])) {
@@ -42,11 +40,13 @@ export const authTest = async (req: FastifyRequest, res: FastifyReply) => {
           count[1]++
         }
       }
+    } else {
+      res.status(401).send({ message: 'Unauthorized' });
     }
     res.status(200).send({ updated: count[0], created: count[1] });
     return
   } catch (error) {
-    res.status(401).send({ message: 'Unauthorized' });
+    res.status(500).send({ message: error });
     return;
   }
 }

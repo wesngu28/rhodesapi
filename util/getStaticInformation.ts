@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
-import { sleep } from './sleep';
 import { HTMLElement, parse } from 'node-html-parser';
 import { operatorInterface } from '../models/operatorModel';
 
@@ -10,6 +9,9 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     const { uploadFile } = await import('@uploadcare/upload-client')
     const operatorHTML = await fetch(url);
     const operator = parse(await operatorHTML.text());
+
+    const sleep = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); }
+    await sleep(2500)
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
     const operatorName = checkForExistence(operator.querySelector('#page-title > h1'));
