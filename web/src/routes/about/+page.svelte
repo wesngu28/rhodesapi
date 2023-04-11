@@ -11,15 +11,9 @@
 		This website is an API interface for the mobile gacha tower defense game Arknights. All data
 		delivered in JSON format is returned in json format.
 	</p>
-	<h2>API is missing some operators</h2>
+	<h2>API is missing some operators, or some operators are out of date/have missing information</h2>
 	<p>
-		If the API is missing operators, you can add them through a POST request. If this doesn't work,
-		feel free to raise an issue on Github.
-	</p>
-	<h2>Some operators are out of date or missing information</h2>
-	<p>
-		If the some operators are out of date or missing information, you can update them through a PUT
-		request. If this doesn't work, feel free to raise an issue on Github.
+		If the API is missing operators, the cron has likely not hit the route yet. Feel free to raise an issue on Github.
 	</p>
 	<h2>Data Sources</h2>
 	<p>
@@ -33,11 +27,15 @@
 	</p>
 	<h2>Stack</h2>
 	<p>
-		The REST API is an Express-based API originally conceived in Javascript before I transitioned it
-		to Typescript, both in the Node.js runtime. It is paired with a backend that makes use of a
-		MongoDB database hosted on Atlas, as well as a Redis layer to make cache heavy requests. The API
-		is hosted on <a href="https://www.cyclic.sh/">cyclic.sh</a>, an awesome way to host fullstack
-		Node.js applications and a great competitor to what Heroku, which was where this used to live.
+		The REST API is a Fastify-based API. It is paired with a backend that makes use of a
+		MongoDB database hosted on Railway, as well as a Redis layer to make cache heavy requests. The API
+		is also hosted on Railway.
+	</p>
+	<p>
+		The API was originally conceived in Javascript before I transitioned it
+		to Typescript, both in the Node.js runtime. It used to use Express and previously used Mongo Atlas
+		and Redis Enterprise. It used to be hosted on <a href="https://www.cyclic.sh/">cyclic.sh</a>, an awesome
+		way to host fullstack Node.js applications and a great competitor to what Heroku, which was where this used to live.
 	</p>
 	<p>
 		The website uses SvelteKit, with vanilla CSS and Typescript. The website is deployed on Vercel.
@@ -57,7 +55,7 @@
 	<p>
 		I made this because I love Arknights, even though I say I hate it when Contigency Contract is
 		active. My favorite operators are, in no particular order: Surtr, Chen, Skadi, Dusk, Frostleaf,
-		Mudrock, Leizi, and Texas. I've played since the game released globally.
+		Mudrock, Leizi, Schwarz, Rockrock, Siege, Horn, and Texas. I've played since the game released globally.
 	</p>
 </div>
 

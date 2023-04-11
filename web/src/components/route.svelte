@@ -2,7 +2,7 @@
 	import { currentDropdownSelection } from '../stores/stores';
 </script>
 
-<div class="text">{`https://rhodesapi.cyclic.app/api${$currentDropdownSelection}`}</div>
+<div class="text">{`rhodesapi.up.railway.app/api${$currentDropdownSelection}`}</div>
 
 <style>
 	.text {

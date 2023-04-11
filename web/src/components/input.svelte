@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { currentDropdownSelection, api, currResponse, operatorName } from '../stores/stores';
+	import { currentDropdownSelection, currResponse, operatorName } from '../stores/stores';
 	let search = '';
 	const handleKeydown = async (event: KeyboardEvent) => {
 		if (search) {
 			if (event.key === 'Enter') {
-				const response = await fetch(`https://rhodesapi.cyclic.app/api${$currentDropdownSelection}${search}`, {
-					method: $api,
+				const response = await fetch(`https://rhodesapi.up.railway.app/api${$currentDropdownSelection}${search}`, {
+					method: "GET",
 					mode: 'cors'
 				});
 				const json = await response.json();

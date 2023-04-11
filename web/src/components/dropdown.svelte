@@ -1,51 +1,28 @@
 <script lang="ts">
-	import { currentDropdownSelection, api } from '../stores/stores.js';
+	import { currentDropdownSelection } from '../stores/stores.js';
 	let selected = true;
 	function setDropdownSelection(this: HTMLButtonElement) {
 		selected = true;
-		if (this.textContent! === 'Add Operator') {
-			currentDropdownSelection.set('/operator/');
-			api.set('POST');
-		}
-		if (this.textContent! === 'Update Operator') {
-			currentDropdownSelection.set('/operator/');
-			api.set('PUT');
-		}
-		if (
-			this.textContent! === 'Search Tags' ||
-			this.textContent! === 'Recruitment' ||
-			this.textContent! === 'Operator Info' ||
-			this.textContent! === 'Operator Skin' ||
-			this.textContent! === 'Operator E2'
-		) {
-			api.set('GET');
-		}
 		if (this.textContent! === 'Operator Info') {
 			currentDropdownSelection.set('/operator/');
 		}
-		if (this.textContent! === 'Operator Skin') {
-			currentDropdownSelection.set('/skins/');
-		}
-		if (this.textContent! === 'Operator E2') {
-			currentDropdownSelection.set('/skins/e2/');
+		if (this.textContent! === 'Operator Art') {
+			currentDropdownSelection.set('/art/');
 		}
 		if (this.textContent! === 'Search Tags') {
-			currentDropdownSelection.set('/search/');
+			currentDropdownSelection.set('/search?');
 		}
 		if (this.textContent! === 'Recruitment') {
-			currentDropdownSelection.set('/recruit/');
+			currentDropdownSelection.set('/recruit?');
 		}
 	}
 </script>
 
 <div class="dropdown">
-	<button class="first-button" on:click={() => (selected = !selected)}>{$api}</button>
+	<button class="first-button" on:click={() => (selected = !selected)}>GET</button>
 	<div class={selected ? 'dropdown-content hidden' : 'dropdown-content'}>
 		<button on:click={setDropdownSelection}>Operator Info</button>
-		<button on:click={setDropdownSelection}>Operator Skin</button>
-		<button on:click={setDropdownSelection}>Operator E2</button>
-		<button on:click={setDropdownSelection}>Add Operator</button>
-		<button on:click={setDropdownSelection}>Update Operator</button>
+		<button on:click={setDropdownSelection}>Operator Art</button>
 		<button on:click={setDropdownSelection}>Search Tags</button>
 		<button on:click={setDropdownSelection}>Recruitment</button>
 	</div>

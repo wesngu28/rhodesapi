@@ -17,6 +17,7 @@
 			<Route />
 			<Input />
 		</div>
+		<p>Hint: Pass in the exclude parameter to ignore fields from response.</p>
 		<PreOutput />
 	</div>
 </div>
@@ -28,6 +29,19 @@
 		justify-content: center;
 		align-items: center;
 		overflow-x: hidden;
+	}
+
+	.wrapper::before {
+		content: "";
+		background-image: url('Siege.png');
+		background-size: cover;
+		background-position: center;
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		left: 0px;
+		opacity: 0.25;
 	}
 
 	h1 {
@@ -46,7 +60,6 @@
 	.form {
 		display: flex;
 		align-items: center;
-		margin-bottom: 1rem;
 		flex-wrap: wrap;
 	}
 

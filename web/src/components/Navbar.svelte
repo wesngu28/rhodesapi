@@ -9,7 +9,7 @@
 </script>
 
 <nav>
-	<a href="https://github.com/wesngu28/rhodesapi"><img src="./github.svg" /></a>
+	<a href="https://github.com/wesngu28/rhodesapi"><img alt="github" src="./github.svg" /></a>
 	<ul class="link-list">
 		<li><a on:click={addUnderline} href="/">Home</a></li>
 		<li><a on:click={addUnderline} href="/about">About</a></li>
