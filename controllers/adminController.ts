@@ -47,7 +47,7 @@ export const authTest = async (req: FastifyRequest, res: FastifyReply) => {
     return
   } catch (error) {
     console.error(error)
-    res.status(500).send({ message: error });
+    res.status(500).send({ message: "Something went wrong" });
     return;
   }
 }

@@ -1,4 +1,5 @@
-import parse from 'node-html-parser';
+import fetch from 'node-fetch';
+import { parse } from 'node-html-parser';
 
 export async function requester() {
   const operatorsHTML = await fetch('https://gamepress.gg/arknights/tools/interactive-operator-list#tags=null##stats');
