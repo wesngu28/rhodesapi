@@ -5,9 +5,7 @@ export async function getOrSetToCache(key: string, callback: Function): Promise<
   const data = await RedisClient.get(key);
   if(data) return JSON.parse(data);
   const queryResult: operatorInterface | Array<operatorInterface> | undefined = await callback();
-  if(queryResult === undefined) {
-    return;
-  } else {
+  if(queryResult) {
     RedisClient.set(key, JSON.stringify(queryResult));
     RedisClient.expire(key, 86400);
     return queryResult;

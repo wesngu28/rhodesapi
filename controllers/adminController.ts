@@ -4,16 +4,14 @@ import Operator, { operatorInterface } from "../models/operatorModel";
 import { getStaticInformation } from "../util/getStaticInformation";
 import { RedisClient } from "../models/redis";
 
-export const authTest = async (req: FastifyRequest, res: FastifyReply) => {
+export const adminCron = async (req: FastifyRequest, res: FastifyReply) => {
   const authHeader = req.headers['authorization'];
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).send({ message: 'Unauthorized' });
-    return;
+    return res.status(401).send({ message: 'Unauthorized' });
   }
-  const token = authHeader.substring(7);
   try {
     let count = [0, 0]
-    if (token === process.env.ADMIN_TOKEN) {
+    if (authHeader.substring(7) === process.env.ADMIN_TOKEN) {
       const operatorList = await requester();
       for (let i = 0; i < 1; i++) {
         const findOperator = await Operator.findOne({_id: operatorList[i],});
@@ -41,10 +39,9 @@ export const authTest = async (req: FastifyRequest, res: FastifyReply) => {
         }
       }
     } else {
-      res.status(401).send({ message: 'Unauthorized' });
+      return res.status(401).send({ message: 'Unauthorized' });
     }
-    res.status(200).send({ updated: count[0], created: count[1] });
-    return
+    return res.status(200).send({ updated: count[0], created: count[1] });
   } catch (error) {
     console.error(error)
     res.status(500).send({ message: "Something went wrong" });
