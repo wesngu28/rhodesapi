@@ -122,7 +122,7 @@
 
   .wrapper::before {
     content: "";
-    background-image: var(--bg-image, url("/Siege.png"));
+    background-image: var(--bg-image);
     background-size: cover;
     background-position: center;
     position: absolute;
