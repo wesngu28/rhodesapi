@@ -1,6 +1,6 @@
 # RhodesAPI
 
-An API for the mobile gacha tower defense game Arknights hosted on Cyclic.sh, made as a personal project.
+An API for the mobile gacha tower defense game Arknights hosted on Railway, made as a personal project.
 
 This API queries a MongoDB database filled with data scraped from each operator's page on Gamepress and returns the results to the user. The responses are cached in a Redis database to improve performance.
 
@@ -27,7 +27,7 @@ Pass in exclude parameter with keys that you want to exclude (?exclude=talents,v
 Pass in e2 parameter to get only the e2 art (?e2=true)
 | Method  | Endpoint                                                  | Description/Sample                                            |
 |:-----:|:--------------------------------------------------------:|:---------------------------------------------------------------- |
-| GET   | https://rhodesapi.cyclic.app/api/art| Get the art of the specified operator.      |
+| GET   | https://rhodesapi.up.railway.app/api/art| Get the art of the specified operator.      |
 
 ### Search Endpoints
 >https://rhodesapi.up.railway.app/api/search?
@@ -54,7 +54,7 @@ Search operators based on provided query parameters. Supported parameters are:
 - `va`
 
 #### Recruit Endpoints
->GET: https://rhodesapi.cyclic.app/api/recruit?tagone=tagone&tagtwo=tagtwo&tagthree=tagthree
+>GET: https://rhodesapi.up.railway.app/api/recruit?tagone=tagone&tagtwo=tagtwo&tagthree=tagthree
 
 Similar to the search query but supports only up to three tags.
 
@@ -70,7 +70,9 @@ Used Technologies: Javascript, Typescript, Node.JS, Express, MongoDB/Mongoose, R
 ### Future Changes
 Maybe ideally I can grab all the image assets for skills, materials, and etc and store them in a CDN as well.
 
-#### Older Routes
+#### Cyclic API Routes
+<details>
+<summary>Old Routes</summary>
 
 ##### Base API URL
 To use this API, you will need to use a HTTP client such as fetch, axios, or requests.
@@ -116,3 +118,4 @@ Search operators based on provided query parameters. Supported parameters are:
 >GET: https://rhodesapi.cyclic.app/api/recruit/:tagone/:tagtwo?:tagthree?
 
 Similar to the search query but supports only up to three tags.
+</details
