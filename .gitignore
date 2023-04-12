@@ -1,4 +1,4 @@
-.*
+.svelte-kit
 node_modules/
 .env
 dist
