@@ -8,7 +8,7 @@
 	let operatorName = landingResponses[rand].name
 	let wrapper: HTMLDivElement;
 	onMount(() => {
-		wrapper.style.setProperty('--bg-image', `url("../../static/${operatorName}.png")`);
+		wrapper.style.setProperty('--bg-image', `url("/${operatorName}.png")`);
 	})
   let search = "";
   const handleKeydown = async (event: KeyboardEvent) => {
@@ -122,7 +122,7 @@
 
   .wrapper::before {
     content: "";
-    background-image: var(--bg-image, url("../../static/Siege.png"));
+    background-image: var(--bg-image, url("/Siege.png"));
     background-size: cover;
     background-position: center;
     position: absolute;
