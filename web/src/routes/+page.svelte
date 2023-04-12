@@ -660,7 +660,7 @@
 
   .wrapper::before {
     content: "";
-    background-image: url("Siege.png");
+    background-image: url("./Siege.png");
     background-size: cover;
     background-position: center;
     position: absolute;
