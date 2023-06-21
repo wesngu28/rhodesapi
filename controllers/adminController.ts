@@ -14,7 +14,7 @@ export const adminCron = async (req: FastifyRequest, res: FastifyReply) => {
     let count = [0, 0]
     if (authHeader.substring(7) === process.env.ADMIN_TOKEN) {
       const operatorList = await requester();
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < operatorList.length; i++) {
         const findOperator = await Operator.findOne({_id: operatorList[i],});
         if (findOperator) {
           const updateInfo: operatorInterface = await getStaticInformation(`https://gamepress.gg/arknights/operator/${operatorList[i]}`, findOperator.art);
