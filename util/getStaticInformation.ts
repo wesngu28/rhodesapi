@@ -237,7 +237,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
         if (imgArr && imgArr[2].link === imgLinkList[2]) {
           operatorArt.push({ name: 'E2', link: imgArr[2].link });
         } else {
-          let file = await uploadFile(imgLinkList[1], {
+          let file = await uploadFile(imgLinkList[2], {
             publicKey: 'e4e7900bd16b1b5b3363',
             store: 'auto',
             fileName: `${operatorName}E2`
