@@ -15,7 +15,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
     const operatorName = checkForExistence(operator.querySelector('#page-title > h1'));
-
+    
     const rangeBox = operator.querySelectorAll('.operator-image .range-box');
     const cells = rangeBox.map((currRange, i) => {
       const currCells = currRange.querySelectorAll('.range-cell')
@@ -201,58 +201,68 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
     const operatorArt: Array<{name: string, link: string, line?: string}> = [];
-    const imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!)
-    if (imgArr && imgArr[0].link === imgLinkList[0]) {
-      operatorArt.push({ name: 'Base', link: imgArr[0].link });
-    } else {
-      let file = await uploadFile(imgLinkList[0], {
-        publicKey: 'e4e7900bd16b1b5b3363',
-        store: 'auto',
-        fileName: `${operatorName}Base`
-      })
-      operatorArt.push({ name: 'Base', link: `https://ucarecdn.com/${file.uuid}/` });
-    }
-    if (rarity > 2) {
-      if (imgArr && imgArr[1].link === imgLinkList[1]) {
-        operatorArt.push({ name: 'E1', link: imgArr[1].link });
+
+    let imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => {
+      if (a.getAttribute('href')?.includes('https')) {
+        return a.getAttribute('href')!
       } else {
-        let file = await uploadFile(imgLinkList[1], {
+        let img = a.querySelector('img')
+        return img!.getAttribute('src')!
+      }
+    })
+    if (imgLinkList.length > 0) {
+      if (imgArr && imgArr[0].link === imgLinkList[0]) {
+        operatorArt.push({ name: 'Base', link: imgArr[0].link });
+      } else {
+        let file = await uploadFile(imgLinkList[0], {
           publicKey: 'e4e7900bd16b1b5b3363',
           store: 'auto',
-          fileName: `${operatorName}E1`
+          fileName: `${operatorName}Base`
         })
-        operatorArt.push({ name: 'E1', link: `https://ucarecdn.com/${file.uuid}/` });
+        operatorArt.push({ name: 'Base', link: `https://ucarecdn.com/${file.uuid}/` });
       }
-    }
-    if (rarity > 3) {
-      if (imgArr && imgArr[2].link === imgLinkList[2]) {
-        operatorArt.push({ name: 'E2', link: imgArr[2].link });
-      } else {
-        let file = await uploadFile(imgLinkList[1], {
-          publicKey: 'e4e7900bd16b1b5b3363',
-          store: 'auto',
-          fileName: `${operatorName}E2`
-        })
-        operatorArt.push({ name: 'E2', link: `https://ucarecdn.com/${file.uuid}/` });
-      }
-    }
-    for (let i = 0; i < imgLinkList.length; i++) {
-      if (!imgLinkList[i].includes('png')) {
-        const test = await fetch('https://gamepress.gg/' + imgLinkList[i]);
-        const skin = parse(await test.text());
-        const name = checkForExistence(skin.querySelector('#page-title > h1'));
-        const line = checkForExistence(skin.querySelector('.skin-series a'));
-        const img = skin.querySelector('.operator-image a')?.getAttribute('href')!
-        operatorArt.push({ name, link: img, line });
-        if (imgArr && imgArr[i].link === imgLinkList[i]) {
-          operatorArt.push({ name, link: imgArr[i].link, line });
+      if (rarity > 2) {
+        if (imgArr && imgArr[1].link === imgLinkList[1]) {
+          operatorArt.push({ name: 'E1', link: imgArr[1].link });
         } else {
-          let file = await uploadFile(imgLinkList[i], {
+          let file = await uploadFile(imgLinkList[1], {
             publicKey: 'e4e7900bd16b1b5b3363',
             store: 'auto',
-            fileName: `${operatorName}${name}`
+            fileName: `${operatorName}E1`
           })
-          operatorArt.push({ name, link: `https://ucarecdn.com/${file.uuid}/`, line});
+          operatorArt.push({ name: 'E1', link: `https://ucarecdn.com/${file.uuid}/` });
+        }
+      }
+      if (rarity > 3) {
+        if (imgArr && imgArr[2].link === imgLinkList[2]) {
+          operatorArt.push({ name: 'E2', link: imgArr[2].link });
+        } else {
+          let file = await uploadFile(imgLinkList[1], {
+            publicKey: 'e4e7900bd16b1b5b3363',
+            store: 'auto',
+            fileName: `${operatorName}E2`
+          })
+          operatorArt.push({ name: 'E2', link: `https://ucarecdn.com/${file.uuid}/` });
+        }
+      }
+      for (let i = 0; i < imgLinkList.length; i++) {
+        if (!imgLinkList[i].includes('png')) {
+          const test = await fetch('https://gamepress.gg/' + imgLinkList[i]);
+          const skin = parse(await test.text());
+          const name = checkForExistence(skin.querySelector('#page-title > h1'));
+          const line = checkForExistence(skin.querySelector('.skin-series a'));
+          const img = skin.querySelector('.operator-image a')?.getAttribute('href')!
+          operatorArt.push({ name, link: img, line });
+          if (imgArr && imgArr[i].link === imgLinkList[i]) {
+            operatorArt.push({ name, link: imgArr[i].link, line });
+          } else {
+            let file = await uploadFile(imgLinkList[i], {
+              publicKey: 'e4e7900bd16b1b5b3363',
+              store: 'auto',
+              fileName: `${operatorName}${name}`
+            })
+            operatorArt.push({ name, link: `https://ucarecdn.com/${file.uuid}/`, line});
+          }
         }
       }
     }
@@ -298,7 +308,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
       "url": url,
     } as operatorInterface;
   } catch (err: any) {
-    throw new Error(err.message);
+    throw new Error(err);
   }
 }
 

@@ -21,12 +21,12 @@ export const getCosts = async (url: string) => {
     let rankcostqty = html.querySelectorAll('.table-3 .material-quantity');
     costList = getItemsAndQuantity(costList, rankcost, rankcostqty);
     const newKeys: string[] = [];
-    for (let i = 0; i < Object.keys(costList).length; i++) {
+    for (let i = 0; i < costList.length; i++) {
         if (Object.values(itemMap).includes(Object.values(costList)[i].name)) {
           const matchingKey = Object.keys(itemMap).find(key => itemMap[key] === Object.values(costList)[i].name);
           newKeys.push(matchingKey!)
         } else {
-          const test = await fetch(Object.keys(costList)[i]);
+          const test = await fetch(costList[i].name);
           const text = await test.text();
           const html = parse(text);
           const name = html.querySelector('#page-title > h1')!.text;
