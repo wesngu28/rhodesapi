@@ -51,7 +51,7 @@ export interface operatorInterface {
   base: Array<{name: string; level: string; effects: string; building: string;}>;
   headhunting: string;
   recruitable: string;
-  art: Array<{name: string, link: string, line?: string}>;
+  art: Array<{name: string, originalLink: string, link: string, line?: string}>;
   availability: string;
   release_dates: { cn: string; global: string;}
   url: string;
