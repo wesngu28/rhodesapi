@@ -210,40 +210,37 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
         return img!.getAttribute('src')!
       }
     })
+    
     if (imgLinkList.length > 0) {
-      if (imgArr && imgArr[0].originalLink === imgLinkList[0]) {
+      if (imgArr && imgArr[0] && imgArr[0].originalLink === imgLinkList[0]) {
         operatorArt.push({ name: 'Base', originalLink: imgLinkList[0], link: imgArr[0].link });
-      } else {
+      } else if (imgArr && imgArr[0]) {
         let file = await uploadFile(imgLinkList[0], {
           publicKey: 'e4e7900bd16b1b5b3363',
           store: 'auto',
           fileName: `${operatorName}Base`
-        })
-        operatorArt.push({ name: 'Base', originalLink: imgLinkList[0],link: `https://ucarecdn.com/${file.uuid}/` });
+        });
+        operatorArt.push({ name: 'Base', originalLink: imgLinkList[0], link: `https://ucarecdn.com/${file.uuid}/` });
       }
-      if (rarity > 2) {
-        if (imgArr && imgArr[1].originalLink === imgLinkList[1]) {
-          operatorArt.push({ name: 'E1', originalLink: imgLinkList[1],link: imgArr[1].link });
-        } else {
-          let file = await uploadFile(imgLinkList[1], {
-            publicKey: 'e4e7900bd16b1b5b3363',
-            store: 'auto',
-            fileName: `${operatorName}E1`
-          })
-          operatorArt.push({ name: 'E1', originalLink: imgLinkList[1], link: `https://ucarecdn.com/${file.uuid}/` });
-        }
+      if (rarity > 2 && imgArr && imgArr[1] && imgArr[1].originalLink === imgLinkList[1]) {
+        operatorArt.push({ name: 'E1', originalLink: imgLinkList[1], link: imgArr[1].link });
+      } else if (rarity > 2 && imgArr && imgArr[1]) {
+        let file = await uploadFile(imgLinkList[1], {
+          publicKey: 'e4e7900bd16b1b5b3363',
+          store: 'auto',
+          fileName: `${operatorName}E1`
+        });
+        operatorArt.push({ name: 'E1', originalLink: imgLinkList[1], link: `https://ucarecdn.com/${file.uuid}/` });
       }
-      if (rarity > 3) {
-        if (imgArr && imgArr[2].originalLink === imgLinkList[2]) {
-          operatorArt.push({ name: 'E2', originalLink: imgLinkList[2],link: imgArr[2].link });
-        } else {
-          let file = await uploadFile(imgLinkList[2], {
-            publicKey: 'e4e7900bd16b1b5b3363',
-            store: 'auto',
-            fileName: `${operatorName}E2`
-          })
-          operatorArt.push({ name: 'E2', originalLink: imgLinkList[2], link: `https://ucarecdn.com/${file.uuid}/` });
-        }
+      if (rarity > 3 && imgArr && imgArr[2] && imgArr[2].originalLink === imgLinkList[2]) {
+        operatorArt.push({ name: 'E2', originalLink: imgLinkList[2], link: imgArr[2].link });
+      } else if (rarity > 3 && imgArr && imgArr[2]) {
+        let file = await uploadFile(imgLinkList[2], {
+          publicKey: 'e4e7900bd16b1b5b3363',
+          store: 'auto',
+          fileName: `${operatorName}E2`
+        });
+        operatorArt.push({ name: 'E2', originalLink: imgLinkList[2], link: `https://ucarecdn.com/${file.uuid}/` });
       }
       for (let i = 0; i < imgLinkList.length; i++) {
         if (!imgLinkList[i].includes('.png')) {
@@ -251,19 +248,19 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
           const skin = parse(await test.text());
           const name = checkForExistence(skin.querySelector('#page-title > h1'));
           const line = checkForExistence(skin.querySelector('.skin-series a'));
-          if (imgArr && imgArr[i].originalLink === imgLinkList[i]) {
+          if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
             operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i].link, line });
-          } else {
+          } else if (imgArr && imgArr[i]) {
             let file = await uploadFile(imgLinkList[i], {
               publicKey: 'e4e7900bd16b1b5b3363',
               store: 'auto',
               fileName: `${operatorName}${name}`
-            })
+            });
             operatorArt.push({ name, originalLink: imgLinkList[i], link: `https://ucarecdn.com/${file.uuid}/`, line});
           }
         }
       }
-    }
+    }    
 
     const costs = await getCosts(url);
     const statistics = await getStatistics(url);
