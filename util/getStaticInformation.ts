@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { HTMLElement, parse } from 'node-html-parser';
@@ -214,7 +213,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     if (imgLinkList.length > 0) {
       if (imgArr && imgArr[0] && imgArr[0].originalLink === imgLinkList[0]) {
         operatorArt.push({ name: 'Base', originalLink: imgLinkList[0], link: imgArr[0].link });
-      } else if (imgArr && imgArr[0]) {
+      } else if (imgLinkList && imgLinkList[0]) {
         let file = await uploadFile(imgLinkList[0], {
           publicKey: 'e4e7900bd16b1b5b3363',
           store: 'auto',
@@ -224,7 +223,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
       }
       if (rarity > 2 && imgArr && imgArr[1] && imgArr[1].originalLink === imgLinkList[1]) {
         operatorArt.push({ name: 'E1', originalLink: imgLinkList[1], link: imgArr[1].link });
-      } else if (rarity > 2 && imgArr && imgArr[1]) {
+      } else if (rarity > 2 && imgLinkList && imgLinkList[1]) {
         let file = await uploadFile(imgLinkList[1], {
           publicKey: 'e4e7900bd16b1b5b3363',
           store: 'auto',
@@ -234,7 +233,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
       }
       if (rarity > 3 && imgArr && imgArr[2] && imgArr[2].originalLink === imgLinkList[2]) {
         operatorArt.push({ name: 'E2', originalLink: imgLinkList[2], link: imgArr[2].link });
-      } else if (rarity > 3 && imgArr && imgArr[2]) {
+      } else if (rarity > 3 && imgLinkList && imgLinkList[2]) {
         let file = await uploadFile(imgLinkList[2], {
           publicKey: 'e4e7900bd16b1b5b3363',
           store: 'auto',
@@ -250,7 +249,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
           const line = checkForExistence(skin.querySelector('.skin-series a'));
           if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
             operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i].link, line });
-          } else if (imgArr && imgArr[i]) {
+          } else if (imgLinkList && imgLinkList[i]) {
             let file = await uploadFile(imgLinkList[i], {
               publicKey: 'e4e7900bd16b1b5b3363',
               store: 'auto',
