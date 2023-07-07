@@ -8,22 +8,26 @@ import { neuralConnect } from './models/connect';
 import fastify from 'fastify';
 import cors from '@fastify/cors'
 import dotenv from 'dotenv';
+import ratelimit from "@fastify/rate-limit"
 
 dotenv.config();
 const app = fastify({
   ignoreTrailingSlash: true
 })
 
-app.register(defaultRouter)
-app.register(operatorRouter, { prefix: '/api' })
-app.register(recruitRouter, { prefix: '/api' })
-app.register(searchRouter, { prefix: '/api' })
-app.register(skinRouter, { prefix: '/api' })
-app.register(adminRouter, { prefix: '/api' })
-
 const start = async () => {
   try {
     await neuralConnect();
+    await app.register(ratelimit, {
+      max: 60,
+      timeWindow: '1 minute'
+    })
+    app.register(defaultRouter)
+    app.register(operatorRouter, { prefix: '/api' })
+    app.register(recruitRouter, { prefix: '/api' })
+    app.register(searchRouter, { prefix: '/api' })
+    app.register(skinRouter, { prefix: '/api' })
+    app.register(adminRouter, { prefix: '/api' })
     await app.register(cors)
     const PORT = process.env.PORT || 5219;
     await app.listen({ port: Number(PORT), host: '0.0.0.0' })
