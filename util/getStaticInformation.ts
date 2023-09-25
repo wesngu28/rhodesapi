@@ -3,18 +3,18 @@ import { getCosts } from './getCosts';
 import { HTMLElement, parse } from 'node-html-parser';
 import { operatorInterface } from '../models/operatorModel';
 
+const sleep = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); }
 export const getStaticInformation = async (url: string, imgArr?: Array<{name: string, originalLink?: string, link: string, line?: string}>) => {
   try {
     const { uploadFile } = await import('@uploadcare/upload-client')
     const operatorHTML = await fetch(url);
     const operator = parse(await operatorHTML.text());
-
-    const sleep = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); }
+    
     await sleep(2500)
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
     const operatorName = checkForExistence(operator.querySelector('#page-title > h1'));
-    
+    console.log(operatorName);
     const rangeBox = operator.querySelectorAll('.operator-image .range-box');
     const cells = rangeBox.map((currRange, i) => {
       const currCells = currRange.querySelectorAll('.range-cell')
@@ -201,66 +201,43 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
 
     const operatorArt: Array<{name: string, originalLink: string, link: string, line?: string}> = [];
 
-    let imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => {
-      if (a.getAttribute('href')?.includes('https')) {
-        return a.getAttribute('href')!
-      } else {
-        let img = a.querySelector('img')
-        return img!.getAttribute('src')!
-      }
-    })
+    let imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!)
     
-    if (imgLinkList.length > 0) {
-      if (imgArr && imgArr[0] && imgArr[0].originalLink === imgLinkList[0]) {
-        operatorArt.push({ name: 'Base', originalLink: imgLinkList[0], link: imgArr[0].link });
+    let e0 = operator.querySelector('.tab-link[data-tab="image-tab-1"]')
+    let e1 = operator.querySelector('.tab-link[data-tab="image-tab-2"]')
+    let e2 = operator.querySelector('.tab-link[data-tab="image-tab-3"]')
+    const lbs = [e0, e1, e2].filter(lb => lb)
+    
+    for (let i = 0; i < lbs.length; i++) {
+      if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
+        operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[0], link: imgArr[0].link });
       } else if (imgLinkList && imgLinkList[0]) {
         let file = await uploadFile(imgLinkList[0], {
           publicKey: 'e4e7900bd16b1b5b3363',
           store: 'auto',
-          fileName: `${operatorName}Base`
+          fileName: `${operatorName}${i === 0 ? "Base" : `E${i}`}`
         });
-        operatorArt.push({ name: 'Base', originalLink: imgLinkList[0], link: `https://ucarecdn.com/${file.uuid}/` });
+        operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[0], link: `https://ucarecdn.com/${file.uuid}/` });
       }
-      if (rarity > 2 && imgArr && imgArr[1] && imgArr[1].originalLink === imgLinkList[1]) {
-        operatorArt.push({ name: 'E1', originalLink: imgLinkList[1], link: imgArr[1].link });
-      } else if (rarity > 2 && imgLinkList && imgLinkList[1]) {
-        let file = await uploadFile(imgLinkList[1], {
-          publicKey: 'e4e7900bd16b1b5b3363',
-          store: 'auto',
-          fileName: `${operatorName}E1`
-        });
-        operatorArt.push({ name: 'E1', originalLink: imgLinkList[1], link: `https://ucarecdn.com/${file.uuid}/` });
-      }
-      if (rarity > 3 && imgArr && imgArr[2] && imgArr[2].originalLink === imgLinkList[2]) {
-        operatorArt.push({ name: 'E2', originalLink: imgLinkList[2], link: imgArr[2].link });
-      } else if (rarity > 3 && imgLinkList && imgLinkList[2]) {
-        let file = await uploadFile(imgLinkList[2], {
-          publicKey: 'e4e7900bd16b1b5b3363',
-          store: 'auto',
-          fileName: `${operatorName}E2`
-        });
-        operatorArt.push({ name: 'E2', originalLink: imgLinkList[2], link: `https://ucarecdn.com/${file.uuid}/` });
-      }
+    }
+
+    imgLinkList = imgLinkList.slice(lbs.length)
+
+    if (imgLinkList.length > 0) {
       for (let i = 0; i < imgLinkList.length; i++) {
-        if (!imgLinkList[i].includes('.png')) {
-          const test = await fetch('https://gamepress.gg/' + imgLinkList[i]);
-          const skin = parse(await test.text());
-          const name = checkForExistence(skin.querySelector('#page-title > h1'));
-          const line = checkForExistence(skin.querySelector('.skin-series a'));
-          if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
-            operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i].link, line });
-          } else if (imgLinkList && imgLinkList[i]) {
-            let file = await uploadFile(imgLinkList[i], {
-              publicKey: 'e4e7900bd16b1b5b3363',
-              store: 'auto',
-              fileName: `${operatorName}${name}`
-            });
-            operatorArt.push({ name, originalLink: imgLinkList[i], link: `https://ucarecdn.com/${file.uuid}/`, line});
-          }
+        const [name, line, skinUrl] = await handleRelativeImageLinks(imgLinkList[i])
+        if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
+          operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i].link, line });
+        } else if (imgLinkList && imgLinkList[i]) {
+          let file = await uploadFile(skinUrl, {
+            publicKey: 'e4e7900bd16b1b5b3363',
+            store: 'auto',
+            fileName: `${operatorName}${name}`
+          });
+          operatorArt.push({ name, originalLink: imgLinkList[i], link: `https://ucarecdn.com/${file.uuid}/`, line});
         }
       }
     }    
-
     const costs = await getCosts(url);
     const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
@@ -315,4 +292,14 @@ function checkForExistence(field: any): string {
     cleanedField = 'Wéi@W';
   }
   return cleanedField;
+}
+
+async function handleRelativeImageLinks(imgLink: string): Promise<Array<string>> {
+    await sleep(1000)
+    const test = await fetch('https://gamepress.gg/' + imgLink);
+    const skin = parse(await test.text());
+    const name = checkForExistence(skin.querySelector('#page-title > h1'));
+    const line = checkForExistence(skin.querySelector('.skin-series a'));
+    const skinUrl = skin.querySelector('.operator-image a');
+    return [name, line, skinUrl?.getAttribute("href")!]
 }
