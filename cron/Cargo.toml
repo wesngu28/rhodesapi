@@ -6,5 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.31"
 dotenvy = "0.15.7"
-minreq = { version = "2.10.0", features = ["https"] }
+minreq = { version = "2.10.0", features = ["https", "json-using-serde"] }
+serde_json = "1.0"
