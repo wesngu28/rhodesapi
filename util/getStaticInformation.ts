@@ -3,7 +3,7 @@ import { getCosts } from './getCosts';
 import { HTMLElement, parse } from 'node-html-parser';
 import { operatorInterface } from '../models/operatorModel';
 import { deleteFiles } from '@uploadcare/rest-client'
-import { uploadCareSimpleAuthSchema } from '../models/redis';
+import { uploadCareSimpleAuthSchema } from '../models/uploadcare';
 
 const sleep = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); }
 export const getStaticInformation = async (url: string, imgArr?: Array<{name: string, originalLink?: string, link: string, line?: string}>) => {
