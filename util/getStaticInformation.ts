@@ -2,6 +2,8 @@ import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { HTMLElement, parse } from 'node-html-parser';
 import { operatorInterface } from '../models/operatorModel';
+import { deleteFiles } from '@uploadcare/rest-client'
+import { uploadCareSimpleAuthSchema } from '../models/redis';
 
 const sleep = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); }
 export const getStaticInformation = async (url: string, imgArr?: Array<{name: string, originalLink?: string, link: string, line?: string}>) => {
@@ -210,13 +212,18 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     
     for (let i = 0; i < lbs.length; i++) {
       if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
-        operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[0], link: imgArr[0].link });
-      } else if (imgLinkList && imgLinkList[0]) {
-        let file = await uploadFile(imgLinkList[0], {
+        operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[i], link: imgArr[i].link });
+      } else if (imgLinkList && imgLinkList[i]) {
+        if (imgArr && imgArr[i]) {
+          console.log("Deleting " + imgArr[i].link)
+          const deleted = await deleteFiles({uuids: [imgArr![i].link.replace('https://ucarecdn.com/', '').replace('/', '')]}, { authSchema: uploadCareSimpleAuthSchema })
+        }
+        let file = await uploadFile(imgLinkList[i], {
           publicKey: 'e4e7900bd16b1b5b3363',
           store: 'auto',
           fileName: `${operatorName}${i === 0 ? "Base" : `E${i}`}`
         });
+        console.log(`Uploaded ${imgLinkList[i]} for ${operatorName}`)
         operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[0], link: `https://ucarecdn.com/${file.uuid}/` });
       }
     }
@@ -226,14 +233,19 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     if (imgLinkList.length > 0) {
       for (let i = 0; i < imgLinkList.length; i++) {
         const [name, line, skinUrl] = await handleRelativeImageLinks(imgLinkList[i])
-        if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
-          operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i].link, line });
+        if (imgArr && imgArr[i + lbs.length] && imgArr[i + lbs.length].originalLink === imgLinkList[i]) {
+          operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i + lbs.length].link, line });
         } else if (imgLinkList && imgLinkList[i]) {
+          if (imgArr && imgArr[i + lbs.length]) {
+            console.log(`${imgArr[i + lbs.length].originalLink} likely changed link!`)
+            const deleted = await deleteFiles({uuids: [imgArr![i + lbs.length].link.replace('https://ucarecdn.com/', '').replace('/', '')]}, { authSchema: uploadCareSimpleAuthSchema })
+          }
           let file = await uploadFile(skinUrl, {
             publicKey: 'e4e7900bd16b1b5b3363',
             store: 'auto',
             fileName: `${operatorName}${name}`
           });
+          console.log(`Uploaded ${name} for ${operatorName}`)
           operatorArt.push({ name, originalLink: imgLinkList[i], link: `https://ucarecdn.com/${file.uuid}/`, line});
         }
       }
