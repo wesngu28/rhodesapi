@@ -63,6 +63,9 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
       obtainable[1] = 'No';
     }
 
+    if (rarity === 5 && obtainable[1] === "Yes") recruitment.push("Senior Operator");
+    if (rarity === 6 && obtainable[1] === "Yes") recruitment.push("Top Operator");
+
     const potential: Array<{name: string, value: string}> = operator.querySelectorAll('.potential-list').map(cell => {
       return({
         "name": checkForExistence(cell.querySelector('.potential-icon')),
