@@ -7,15 +7,15 @@
   let arts = {};
 	onMount(async () => {
 		const response = await fetch(
-			'https://rhodesapi.up.railway.app/api/operator/siege'
+			'https://api.rhodesapi.com/api/operator/siege'
 		);
 		const response2 = await fetch(
-			'https://rhodesapi.up.railway.app/api/search?race=sarkaz&class=guard&tags=dps'
+			'https://api.rhodesapi.com/api/search?race=sarkaz&class=guard&tags=dps'
 		);
 		const response3 = await fetch(
-			'https://rhodesapi.up.railway.app/api/recruit?tag1=vanguard&tag2=dps'
+			'https://api.rhodesapi.com/api/recruit?tag1=vanguard&tag2=dps'
 		);
-    const art = await fetch("https://rhodesapi.up.railway.app/api/art/frostleaf")
+    const art = await fetch("https://api.rhodesapi.com/api/art/frostleaf")
 		siege = await response.json();
 		search = await response2.json();
 		recruit = await response3.json();
@@ -34,33 +34,33 @@
 		<h2 id="Get">GET Operators</h2>
     <p>Pass in an exclude parameter to exclude certain keys from the returned json. For example, ?exclude=talents to exclude talents.</p>
 		<Docuroute
-			route={'https://rhodesapi.up.railway.app/api/operator'}
+			route={'https://api.rhodesapi.com/api/operator'}
 			text={'Get a list of all operators and their associated information.'}
 		/>
 		<Docuroute
-			route={'https://rhodesapi.up.railway.app/api/operator/:name'}
+			route={'https://api.rhodesapi.com/api/operator/:name'}
 			text={'Get a singular operator and their associated information.'}
 		/>
-		<p>https://rhodesapi.up.railway.app/api/operator/siege</p>
+		<p>https://api.rhodesapi.com/api/operator/siege</p>
 		<pre>{JSON.stringify(siege, null, 2)}</pre>
 		<Docuroute
-			route={'https://rhodesapi.up.railway.app/api/art/frostleaf'}
+			route={'https://api.rhodesapi.com/api/art/frostleaf'}
 			text={'Get all the art of the specified operator, if they have one. Pass in ?e2=true to get only the e2.'}
 		/>
-		<p>https://rhodesapi.up.railway.app/api/operator/frostleaf</p>
+		<p>https://api.rhodesapi.com/api/operator/frostleaf</p>
 		<pre>{JSON.stringify(arts, null, 2)}</pre>
 		<Docuroute
-			route={'https://rhodesapi.up.railway.app/api/search?'}
+			route={'https://api.rhodesapi.com/api/search?'}
 			text={'Search operators based on provided query parameters. Non-case sensitive, for names with hyphens, hyphens can be provided in the request body but spaces are also supported.'}
       age={"new"}
     />
-		<p>https://rhodesapi.up.railway.app/api/search?race=sarkaz&class=guard&tags=dps</p>
+		<p>https://api.rhodesapi.com/api/search?race=sarkaz&class=guard&tags=dps</p>
 		<pre>{JSON.stringify(search, null, 2)}</pre>
 		<Docuroute
-			route={'https://rhodesapi.up.railway.app/api/recruit?tagone=tagone&tagtwo=tagtwo&tagthree=tagthree'}
+			route={'https://api.rhodesapi.com/api/recruit?tag1=tagone&tag2=tagtwo&tag3=tagthree'}
 			text={"Similar to the search query but supports only up to three tags. Returns matching operators with the provided tags and are recruitable to simulate the game's recruit system."}
 		/>
-		<p>https://rhodesapi.up.railway.app/api/recruit?tag1=vanguard&tag2=dps</p>
+		<p>https://api.rhodesapi.com/api/recruit?tag1=vanguard&tag2=dps</p>
 		<pre>{JSON.stringify(recruit, null, 2)}</pre>
 	</div>
 </div>
@@ -100,7 +100,7 @@
 
 	pre {
 		width: 48rem;
-		height: 48rem;
+		max-height: 48rem;
 		overflow-y: scroll;
 		white-space: pre-wrap;
 		margin: 1rem;
