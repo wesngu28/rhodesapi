@@ -15,7 +15,7 @@
     if (search) {
       if (event.key === "Enter") {
         const response = await fetch(
-          `https://rhodesapi.up.railway.app/api${currentDropdownSelection}${search}`,
+          `https://api.rhodesapi.com/api${currentDropdownSelection}${search}`,
           {
             method: "GET",
             mode: "cors",
@@ -81,7 +81,7 @@
         </div>
       </div>
       <div class="text">
-        {`rhodesapi.up.railway.app/api${currentDropdownSelection}`}
+        {`api.rhodesapi.com/api${currentDropdownSelection}`}
       </div>
       <label><input class="inpute" type="text" bind:value={search} /></label>
     </div>

@@ -14,23 +14,23 @@ Use a HTTP client (IE: fetch, axios, requests)
 
 ### Base API URL
 To use this API, you will need to use a HTTP client such as fetch, axios, or requests. The railway version is the current updated version, but cyclic will be maintained on the older version as it connects to the Mongo atlas cluster.
->https://rhodesapi.up.railway.app/api/
+>https://api.rhodesapi.com/api/
 
 ### Operator Endpoints
 Pass in exclude parameter with keys that you want to exclude (?exclude=talents,voicelines).
 | Method  | Endpoint                                                  | Description/Sample                                            |
 |:-----:|:--------------------------------------------------------:|:---------------------------------------------------------------- |
-| GET   | https://rhodesapi.up.railway.app/api/operator      | Get all operators and their associated information.               |
-| GET   | https://rhodesapi.up.railway.app/api/operator/:name| Get a singular operator and their associated information.        |
+| GET   | https://api.rhodesapi.com/api/operator      | Get all operators and their associated information.               |
+| GET   | https://api.rhodesapi.com/api/operator/:name| Get a singular operator and their associated information.        |
 
 ### Art Endpoint
 Pass in e2 parameter to get only the e2 art (?e2=true)
 | Method  | Endpoint                                                  | Description/Sample                                            |
 |:-----:|:--------------------------------------------------------:|:---------------------------------------------------------------- |
-| GET   | https://rhodesapi.up.railway.app/api/art| Get the art of the specified operator.      |
+| GET   | https://api.rhodesapi.com/api/art| Get the art of the specified operator.      |
 
 ### Search Endpoints
->https://rhodesapi.up.railway.app/api/search?
+>https://api.rhodesapi.com/api/search?
 
 Search operators based on provided query parameters. Supported parameters are:
 - `gender`
@@ -54,7 +54,7 @@ Search operators based on provided query parameters. Supported parameters are:
 - `va`
 
 #### Recruit Endpoints
->GET: https://rhodesapi.up.railway.app/api/recruit?tag1=tagone&tag2=tagtwo&tag3=tagthree
+>GET: https://api.rhodesapi.com/api/recruit?tag1=tagone&tag2=tagtwo&tag3=tagthree
 
 Similar to the search query but supports only up to three tags.
 

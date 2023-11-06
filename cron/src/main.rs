@@ -4,7 +4,7 @@ use dotenvy::dotenv;
 fn main() {
     dotenv().ok();
     
-    let response = match minreq::get("https://rhodesapi.up.railway.app/api/admin")
+    let response = match minreq::get("https://api.rhodesapi.com/api/admin")
         .with_header("Authorization", String::from(std::env::var("authorization").unwrap()))
         .send() {
             Ok(response)=> response,
