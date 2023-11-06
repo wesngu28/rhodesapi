@@ -55,6 +55,7 @@ Search operators based on provided query parameters. Supported parameters are:
 
 #### Recruit Endpoints
 >GET: https://rhodesapi.up.railway.app/api/recruit?tag1=tagone&tag2=tagtwo&tag3=tagthree
+
 Similar to the search query but supports only up to three tags.
 
 ### Notes
