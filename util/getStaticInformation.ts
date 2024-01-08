@@ -218,7 +218,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
         operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[i], link: imgArr[i].link });
       } else if (imgLinkList && imgLinkList[i]) {
         if (imgArr && imgArr[i]) {
-          console.log(`Deleting ${imgArr[i].link}, ${imgArr[i].originalLink} does not match ${imgLinkList[[i]]}`)
+          console.log(`Deleting ${imgArr[i].link}, ${imgArr[i].originalLink} does not match ${imgLinkList[i]}`)
           const deleted = await deleteFiles({ uuids: [imgArr![i].link.replace('https://ucarecdn.com/', '').replace('/', '')] }, { authSchema: uploadCareSimpleAuthSchema })
         }
         let file = await uploadFile(imgLinkList[i], {
