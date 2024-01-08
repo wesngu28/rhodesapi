@@ -6,12 +6,12 @@ import { deleteFiles } from '@uploadcare/rest-client'
 import { uploadCareSimpleAuthSchema } from '../models/uploadcare';
 
 const sleep = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); }
-export const getStaticInformation = async (url: string, imgArr?: Array<{name: string, originalLink?: string, link: string, line?: string}>) => {
+export const getStaticInformation = async (url: string, imgArr?: Array<{ name: string, originalLink?: string, link: string, line?: string }>) => {
   try {
     const { uploadFile } = await import('@uploadcare/upload-client')
     const operatorHTML = await fetch(url);
     const operator = parse(await operatorHTML.text());
-    
+
     await sleep(2500)
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
@@ -58,7 +58,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     if (classArr[0]) recruitment.push(classArr[0].replace(/\n/g, ''));
 
     const obtainable = operator.querySelectorAll('.obtain-approach-table span').map(existence => existence.textContent)
-    if(obtainable[1] === '(LIMITED)'){
+    if (obtainable[1] === '(LIMITED)') {
       obtainable[0] = 'Yes';
       obtainable[1] = 'No';
     }
@@ -66,41 +66,41 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     if (rarity === 5 && obtainable[1] === "Yes") recruitment.push("Senior Operator");
     if (rarity === 6 && obtainable[1] === "Yes") recruitment.push("Top Operator");
 
-    const potential: Array<{name: string, value: string}> = operator.querySelectorAll('.potential-list').map(cell => {
-      return({
+    const potential: Array<{ name: string, value: string }> = operator.querySelectorAll('.potential-list').map(cell => {
+      return ({
         "name": checkForExistence(cell.querySelector('.potential-icon')),
         "value": checkForExistence(cell.querySelector('.potential-title'))
       });
     })
 
-    const trust: Array<{name: string, value: string}> = operator.querySelectorAll('.trust-cell .potential-list').map(cell => {
-      return({
+    const trust: Array<{ name: string, value: string }> = operator.querySelectorAll('.trust-cell .potential-list').map(cell => {
+      return ({
         "name": checkForExistence(cell.querySelector('.potential-icon')),
         "value": checkForExistence(cell.querySelector('.potential-title'))
       });
     })
 
-    const talent: Array<{name: string, variation: Array<{description: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number}>}> = []
+    const talent: Array<{ name: string, variation: Array<{ description: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number }> }> = []
     operator.querySelectorAll('.talent-child').forEach(cell => {
-        let eliteImage = cell.querySelector('.elite-level img')
-        let potential = cell.querySelector('.potential-level img')
-        let loc = potential?.getAttribute("src")?.indexOf(".png")
-        let name = checkForExistence(cell.querySelector('.talent-title'))
-        if(!talent.find(talents => talents.hasOwnProperty("name"))) {
-          let currentVariation = {
-            "description": checkForExistence(cell.querySelector('.talent-description')),
-            "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
-            "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
-          }
-          talent.push({ name, variation: [currentVariation] })
-        } else {
-          const skill = talent.find(talents => talents.hasOwnProperty("name"))!;
-          skill.variation.push({
-            "description": checkForExistence(cell.querySelector('.talent-description')),
-            "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
-            "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
-          })
+      let eliteImage = cell.querySelector('.elite-level img')
+      let potential = cell.querySelector('.potential-level img')
+      let loc = potential?.getAttribute("src")?.indexOf(".png")
+      let name = checkForExistence(cell.querySelector('.talent-title'))
+      if (!talent.find(talents => talents.hasOwnProperty("name"))) {
+        let currentVariation = {
+          "description": checkForExistence(cell.querySelector('.talent-description')),
+          "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
+          "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
         }
+        talent.push({ name, variation: [currentVariation] })
+      } else {
+        const skill = talent.find(talents => talents.hasOwnProperty("name"))!;
+        skill.variation.push({
+          "description": checkForExistence(cell.querySelector('.talent-description')),
+          "elite": eliteImage && eliteImage.getAttribute("src")?.includes('2.png') ? "E2" : "E1",
+          "potential": potential && loc ? potential!.getAttribute("src")![loc - 1] : "0"
+        })
+      }
     })
 
     const skillsTabs = operator.querySelectorAll('.skill-cell').map((skill, i) => {
@@ -132,19 +132,19 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
 
     })
 
-    let modules: [{[key: string]: any}] = [{}];
+    let modules: [{ [key: string]: any }] = [{}];
     for (let i = 1; i <= 3; i++) {
       const modulo = operator.querySelectorAll(`.operator-page-cell > .views-element-container .module-group-lvl-${i}`);
       modulo.forEach(modulos => {
         const moduleName = checkForExistence(modulos.querySelector(".module-title a"));
-        const moduleAttribute: { [key: string]: string }  = {};
+        const moduleAttribute: { [key: string]: string } = {};
         const moduleAttributeNames = modulos.querySelectorAll('.module-row-3 > table tr > th').slice(2).map(moduleAttributeName => checkForExistence(moduleAttributeName));
         const moduleAttributeValues = modulos.querySelectorAll('.module-row-3 > table tr > td').map(moduleAttributeValue => checkForExistence(moduleAttributeValue));
         moduleAttributeNames.forEach((moduleAttributeName, i) => moduleAttribute[moduleAttributeName] = moduleAttributeValues[i]);
         let talent = modulos.querySelectorAll('.paragraph--type--module-talent-attributes').map(cell => {
           let elitePotImages = cell.querySelectorAll('.module-unlock-phase img')
           let loc = elitePotImages[1]?.getAttribute("src")?.indexOf(".png")
-          return({
+          return ({
             "name": checkForExistence(cell.querySelector('.module-talent-name a')),
             "value": checkForExistence(cell.querySelector('.module-talent-row-2')),
             "elite": elitePotImages[0] && elitePotImages[0].getAttribute("src")?.includes('2.png') ? "E2" : "E1",
@@ -181,7 +181,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
       });
     }
 
-    if (!modules) modules = [{"status": "Operator has no modules"}]
+    if (!modules) modules = [{ "status": "Operator has no modules" }]
 
     const base = operator.querySelectorAll('.building-buff-cell').map(el => {
       const name = checkForExistence(el.querySelector('.title-cell'));
@@ -191,7 +191,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
       return { name, level, effects, building };
     });
 
-    const characterInfo: {[key: string]: string} = {};
+    const characterInfo: { [key: string]: string } = {};
     const infoKeys = operator.querySelectorAll('.profile-info-table > table:nth-child(2) th, .profile-info-table > table:nth-child(4) th').map(th => checkForExistence(th).replaceAll(' ', '_').toLowerCase());
     const infoBody = operator.querySelectorAll('.profile-info-table > table:nth-child(2) td, .profile-info-table > table:nth-child(4) td').map(td => checkForExistence(td));
     infoKeys.forEach((key, i) => characterInfo[key] = infoBody[i]);
@@ -204,22 +204,22 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
     const voiceLinesContent = operator.querySelectorAll('.voice-lines-table td').map(td => checkForExistence(td));
     voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
-    const operatorArt: Array<{name: string, originalLink: string, link: string, line?: string}> = [];
+    const operatorArt: Array<{ name: string, originalLink: string, link: string, line?: string }> = [];
 
     let imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!)
-    
+
     let e0 = operator.querySelector('.tab-link[data-tab="image-tab-1"]')
     let e1 = operator.querySelector('.tab-link[data-tab="image-tab-2"]')
     let e2 = operator.querySelector('.tab-link[data-tab="image-tab-3"]')
     const lbs = [e0, e1, e2].filter(lb => lb)
-    
+
     for (let i = 0; i < lbs.length; i++) {
       if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
         operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[i], link: imgArr[i].link });
       } else if (imgLinkList && imgLinkList[i]) {
         if (imgArr && imgArr[i]) {
-          console.log("Deleting " + imgArr[i].link)
-          const deleted = await deleteFiles({uuids: [imgArr![i].link.replace('https://ucarecdn.com/', '').replace('/', '')]}, { authSchema: uploadCareSimpleAuthSchema })
+          console.log(`Deleting ${imgArr[i].link}, ${imgArr[i].originalLink} does not match ${imgLinkList[[i]]}`)
+          const deleted = await deleteFiles({ uuids: [imgArr![i].link.replace('https://ucarecdn.com/', '').replace('/', '')] }, { authSchema: uploadCareSimpleAuthSchema })
         }
         let file = await uploadFile(imgLinkList[i], {
           publicKey: 'e4e7900bd16b1b5b3363',
@@ -241,7 +241,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
         } else if (imgLinkList && imgLinkList[i]) {
           if (imgArr && imgArr[i + lbs.length]) {
             console.log(`${imgArr[i + lbs.length].originalLink} likely changed link!`)
-            const deleted = await deleteFiles({uuids: [imgArr![i + lbs.length].link.replace('https://ucarecdn.com/', '').replace('/', '')]}, { authSchema: uploadCareSimpleAuthSchema })
+            const deleted = await deleteFiles({ uuids: [imgArr![i + lbs.length].link.replace('https://ucarecdn.com/', '').replace('/', '')] }, { authSchema: uploadCareSimpleAuthSchema })
           }
           let file = await uploadFile(skinUrl, {
             publicKey: 'e4e7900bd16b1b5b3363',
@@ -249,10 +249,10 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{name: st
             fileName: `${operatorName}${name}`
           });
           console.log(`Uploaded ${name} for ${operatorName}`)
-          operatorArt.push({ name, originalLink: imgLinkList[i], link: `https://ucarecdn.com/${file.uuid}/`, line});
+          operatorArt.push({ name, originalLink: imgLinkList[i], link: `https://ucarecdn.com/${file.uuid}/`, line });
         }
       }
-    }    
+    }
     const costs = await getCosts(url);
     const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
@@ -310,11 +310,11 @@ function checkForExistence(field: any): string {
 }
 
 async function handleRelativeImageLinks(imgLink: string): Promise<Array<string>> {
-    await sleep(1000)
-    const test = await fetch('https://gamepress.gg/' + imgLink);
-    const skin = parse(await test.text());
-    const name = checkForExistence(skin.querySelector('#page-title > h1'));
-    const line = checkForExistence(skin.querySelector('.skin-series a'));
-    const skinUrl = skin.querySelector('.operator-image a');
-    return [name, line, skinUrl?.getAttribute("href")!]
+  await sleep(1000)
+  const test = await fetch('https://gamepress.gg/' + imgLink);
+  const skin = parse(await test.text());
+  const name = checkForExistence(skin.querySelector('#page-title > h1'));
+  const line = checkForExistence(skin.querySelector('.skin-series a'));
+  const skinUrl = skin.querySelector('.operator-image a');
+  return [name, line, skinUrl?.getAttribute("href")!]
 }
