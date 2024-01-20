@@ -2,13 +2,11 @@ import { getStatistics } from './getStatistics';
 import { getCosts } from './getCosts';
 import { HTMLElement, parse } from 'node-html-parser';
 import { operatorInterface } from '../models/operatorModel';
-import { deleteFiles } from '@uploadcare/rest-client'
-import { uploadCareSimpleAuthSchema } from '../models/uploadcare';
+import cloudinary from '../models/cloudinary';
 
 const sleep = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); }
 export const getStaticInformation = async (url: string, imgArr?: Array<{ name: string, originalLink?: string, link: string, line?: string }>) => {
   try {
-    const { uploadFile } = await import('@uploadcare/upload-client')
     const operatorHTML = await fetch(url);
     const operator = parse(await operatorHTML.text());
 
@@ -16,7 +14,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
 
     let rarity = operator.querySelectorAll('.rarity-cell > img').length;
     const operatorName = checkForExistence(operator.querySelector('#page-title > h1'));
-    console.log(operatorName);
+
     const rangeBox = operator.querySelectorAll('.operator-image .range-box');
     const cells = rangeBox.map((currRange, i) => {
       const currCells = currRange.querySelectorAll('.range-cell')
@@ -207,7 +205,6 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
     const operatorArt: Array<{ name: string, originalLink: string, link: string, line?: string }> = [];
 
     let imgLinkList = operator.querySelectorAll('.operator-image > a').map(a => a.getAttribute('href')!)
-
     let e0 = operator.querySelector('.tab-link[data-tab="image-tab-1"]')
     let e1 = operator.querySelector('.tab-link[data-tab="image-tab-2"]')
     let e2 = operator.querySelector('.tab-link[data-tab="image-tab-3"]')
@@ -217,17 +214,12 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
       if (imgArr && imgArr[i] && imgArr[i].originalLink === imgLinkList[i]) {
         operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[i], link: imgArr[i].link });
       } else if (imgLinkList && imgLinkList[i]) {
-        if (imgArr && imgArr[i]) {
-          console.log(`Deleting ${imgArr[i].link}, ${imgArr[i].originalLink} does not match ${imgLinkList[i]}`)
-          const deleted = await deleteFiles({ uuids: [imgArr![i].link.replace('https://ucarecdn.com/', '').replace('/', '')] }, { authSchema: uploadCareSimpleAuthSchema })
+        console.log("Reuploading due to file name change or new art")
+        const image = await uploadImage(imgLinkList[i])
+        if (image) {
+          console.log(`Uploaded ${imgLinkList[i]} for ${operatorName}`)
+          operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[0], link: image });
         }
-        let file = await uploadFile(imgLinkList[i], {
-          publicKey: 'e4e7900bd16b1b5b3363',
-          store: 'auto',
-          fileName: `${operatorName}${i === 0 ? "Base" : `E${i}`}`
-        });
-        console.log(`Uploaded ${imgLinkList[i]} for ${operatorName}`)
-        operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[0], link: `https://ucarecdn.com/${file.uuid}/` });
       }
     }
 
@@ -239,17 +231,12 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
         if (imgArr && imgArr[i + lbs.length] && imgArr[i + lbs.length].originalLink === imgLinkList[i]) {
           operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i + lbs.length].link, line });
         } else if (imgLinkList && imgLinkList[i]) {
-          if (imgArr && imgArr[i + lbs.length]) {
-            console.log(`${imgArr[i + lbs.length].originalLink} likely changed link!`)
-            const deleted = await deleteFiles({ uuids: [imgArr![i + lbs.length].link.replace('https://ucarecdn.com/', '').replace('/', '')] }, { authSchema: uploadCareSimpleAuthSchema })
+          console.log("Reuploading due to file name change or new art")
+          const image = await uploadImage(skinUrl)
+          if (image) {
+            console.log(`Uploaded ${name} for ${operatorName}`)
+            operatorArt.push({ name, originalLink: imgLinkList[i], link: image, line });
           }
-          let file = await uploadFile(skinUrl, {
-            publicKey: 'e4e7900bd16b1b5b3363',
-            store: 'auto',
-            fileName: `${operatorName}${name}`
-          });
-          console.log(`Uploaded ${name} for ${operatorName}`)
-          operatorArt.push({ name, originalLink: imgLinkList[i], link: `https://ucarecdn.com/${file.uuid}/`, line });
         }
       }
     }
@@ -318,3 +305,13 @@ async function handleRelativeImageLinks(imgLink: string): Promise<Array<string>>
   const skinUrl = skin.querySelector('.operator-image a');
   return [name, line, skinUrl?.getAttribute("href")!]
 }
+
+const uploadImage = async (skinUrl: string) => {
+  const options = {
+    use_filename: true,
+    unique_filename: false,
+    overwrite: false,
+  };
+  const result = await cloudinary.uploader.upload(skinUrl, options);
+  return result.secure_url;
+};
