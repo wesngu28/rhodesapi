@@ -216,9 +216,12 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
       } else if (imgLinkList && imgLinkList[i]) {
         console.log("Reuploading due to file name change or new art")
         const image = await uploadImage(imgLinkList[i])
-        if (image) {
+        if (image.secure_url && image.existing === false) {
           console.log(`Uploaded ${imgLinkList[i]} for ${operatorName}`)
-          operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[0], link: image });
+          operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[i], link: image.secure_url });
+        } else {
+          operatorArt.push({ name: `${i === 0 ? "Base" : `E${i}`}`, originalLink: imgLinkList[i], link: image.secure_url });
+          console.log(`Tried to upload ${imgLinkList[i]} for ${operatorName} but failed`)
         }
       }
     }
@@ -229,17 +232,21 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
       for (let i = 0; i < imgLinkList.length; i++) {
         const [name, line, skinUrl] = await handleRelativeImageLinks(imgLinkList[i])
         if (imgArr && imgArr[i + lbs.length] && imgArr[i + lbs.length].originalLink === imgLinkList[i]) {
-          operatorArt.push({ name, originalLink: imgLinkList[i], link: imgArr[i + lbs.length].link, line });
+          operatorArt.push({ name, originalLink: skinUrl, link: imgArr[i + lbs.length].link, line });
         } else if (imgLinkList && imgLinkList[i]) {
-          console.log("Reuploading due to file name change or new art")
+          console.log("Reuploading skin due to file name change or new art")
           const image = await uploadImage(skinUrl)
-          if (image) {
+          if (image.secure_url && image.existing === false) {
             console.log(`Uploaded ${name} for ${operatorName}`)
-            operatorArt.push({ name, originalLink: imgLinkList[i], link: image, line });
+            operatorArt.push({ name, originalLink: skinUrl, link: image.secure_url, line });
+          } else {
+            operatorArt.push({ name, originalLink: skinUrl, link: image.secure_url, line });
+            console.log(`Tried to upload ${name} for ${operatorName} but failed`)
           }
         }
       }
     }
+
     const costs = await getCosts(url);
     const statistics = await getStatistics(url);
     const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
@@ -303,7 +310,8 @@ async function handleRelativeImageLinks(imgLink: string): Promise<Array<string>>
   const name = checkForExistence(skin.querySelector('#page-title > h1'));
   const line = checkForExistence(skin.querySelector('.skin-series a'));
   const skinUrl = skin.querySelector('.operator-image a');
-  return [name, line, skinUrl?.getAttribute("href")!]
+  return [name, line, skinUrl?.getAttribute('href')?.includes('https://gamepress.gg/')
+    ? skinUrl.getAttribute('href')! : `https://gamepress.gg${skinUrl?.getAttribute("href")}`]
 }
 
 const uploadImage = async (skinUrl: string) => {
@@ -313,5 +321,8 @@ const uploadImage = async (skinUrl: string) => {
     overwrite: false,
   };
   const result = await cloudinary.uploader.upload(skinUrl, options);
-  return result.secure_url;
+  return {
+    secure_url: result.secure_url,
+    existing: result.existing
+  }
 };
