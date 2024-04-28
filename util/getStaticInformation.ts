@@ -198,8 +198,10 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
     const affiliations: string[] = operator.querySelectorAll('.group-name > a')?.map(affiliation => checkForExistence(affiliation));
 
     const voiceLines: { [key: string]: string } = {};
-    const voiceLineConditions = operator.querySelectorAll('.voice-lines-table th').map(th => checkForExistence(th).replaceAll(' ', '_').toLowerCase());
-    const voiceLinesContent = operator.querySelectorAll('.voice-lines-table td').map(td => checkForExistence(td));
+    const accordionContent = operator.querySelector('.voice-lines-table');
+    const voiceLineConditions = (accordionContent?.querySelectorAll('th') || []).map(th => checkForExistence(th).replaceAll(' ', '_').toLowerCase());
+    const voiceLinesContent = (accordionContent?.querySelectorAll('td') || []).map(td => checkForExistence(td));
+
     voiceLineConditions.forEach((voiceLineConditions, i) => voiceLines[voiceLineConditions] = voiceLinesContent[i]);
 
     const operatorArt: Array<{ name: string, originalLink: string, link: string, line?: string }> = [];
