@@ -17,7 +17,7 @@
 	</p>
 	<h2>Data Sources</h2>
 	<p>
-		The data stored in the database is based off data from <a href="https://gamepress.gg/arknights/"
+		The data stored in the database is based off data from <a href="https://ak.gamepress.gg/arknights/"
 			>the Gamepress Arknights wiki</a
 		>. Information from the site was scraped using Cheerio and
 		<a href="https://github.com/taoqf/node-html-parser">node-html-parser</a>. node-html-parser is

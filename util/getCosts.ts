@@ -1,5 +1,5 @@
 import { parse } from 'node-html-parser'
-const BASE = 'https://gamepress.gg/'
+const BASE = 'https://ak.gamepress.gg/'
 
 export const getCosts = async (url: string) => {
     const itemRes = await fetch(

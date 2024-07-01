@@ -1,7 +1,7 @@
 import { parse } from 'node-html-parser';
 
 export async function requester() {
-  const operatorsHTML = await fetch('https://gamepress.gg/arknights/tools/interactive-operator-list#tags=null##stats');
+  const operatorsHTML = await fetch('https://ak.gamepress.gg/arknights/tools/interactive-operator-list#tags=null##stats');
   const operators = parse(await operatorsHTML.text());
   const data = operators.querySelectorAll('.operator-title-actual').map(operator => {
     let name = operator.textContent.replaceAll('(', '')

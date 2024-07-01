@@ -251,7 +251,7 @@ export const getStaticInformation = async (url: string, imgArr?: Array<{ name: s
 
     const costs = await getCosts(url);
     const statistics = await getStatistics(url);
-    const gamepressname = url.replace('https://gamepress.gg/arknights/operator/', '');
+    const gamepressname = url.replace('https://ak.gamepress.gg/arknights/operator/', '');
     const availability = operator.querySelectorAll('.obtain-approach-table table');
     const releaseDates = {
       cn: checkForExistence(availability[1].querySelectorAll('td')[0]),
@@ -307,13 +307,13 @@ function checkForExistence(field: any): string {
 
 async function handleRelativeImageLinks(imgLink: string): Promise<Array<string>> {
   await sleep(1000)
-  const test = await fetch('https://gamepress.gg/' + imgLink);
+  const test = await fetch('https://ak.gamepress.gg/' + imgLink);
   const skin = parse(await test.text());
   const name = checkForExistence(skin.querySelector('#page-title > h1'));
   const line = checkForExistence(skin.querySelector('.skin-series a'));
   const skinUrl = skin.querySelector('.operator-image a');
-  return [name, line, skinUrl?.getAttribute('href')?.includes('https://gamepress.gg/')
-    ? skinUrl.getAttribute('href')! : `https://gamepress.gg${skinUrl?.getAttribute("href")}`]
+  return [name, line, skinUrl?.getAttribute('href')?.includes('https://ak.gamepress.gg/')
+    ? skinUrl.getAttribute('href')! : `https://ak.gamepress.gg${skinUrl?.getAttribute("href")}`]
 }
 
 const uploadImage = async (skinUrl: string) => {

@@ -238,12 +238,12 @@
 		"headhunting": "Yes",
 		"recruitable": "Yes",
 		"art": {
-			"Base": "https://gamepress.gg/arknights/sites/arknights/files/2019-11/char_010_chen_1.png",
-			"E2": "https://gamepress.gg/arknights/sites/arknights/files/2019-11/char_010_chen_2.png",
-			"Ageless Afterglow": "https://gamepress.gg/arknights/sites/arknights/files/2020-02/ArtChenSkinNian.png"
+			"Base": "https://ak.gamepress.gg/sites/default/files/2019-11/char_010_chen_1.png",
+			"E2": "https://ak.gamepress.gg/sites/default/files/2019-11/char_010_chen_2.png",
+			"Ageless Afterglow": "https://ak.gamepress.gg/sites/default/files/2020-02/ArtChenSkinNian.png"
 		},
 		"availability": "Global",
-		"url": "https://gamepress.gg/arknights/operator/Chen",
+		"url": "https://ak.gamepress.gg/arknights/operator/chen",
 		"dateAdded": "2022-06-25T19:48:20.275Z",
 		"__v": 3
 	}

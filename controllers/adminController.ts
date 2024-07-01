@@ -19,7 +19,7 @@ export const adminCron = async (req: FastifyRequest, res: FastifyReply) => {
         if (name === "Лето") name = "leto"
         const findOperator = await Operator.findOne({ _id: name, });
         if (findOperator) {
-          const updateInfo: operatorInterface = await getStaticInformation(`https://gamepress.gg/arknights/operator/${name}`, findOperator.art);
+          const updateInfo: operatorInterface = await getStaticInformation(`https://ak.gamepress.gg/arknights/operator/${name}`, findOperator.art);
           const changedFields: { [key: string]: string } = {};
           Object.keys(updateInfo).forEach((key, i) => {
             if (JSON.stringify(findOperator.get(key)) !== JSON.stringify(Object.values(updateInfo)[i])) {
@@ -36,7 +36,7 @@ export const adminCron = async (req: FastifyRequest, res: FastifyReply) => {
             count[0]++
           }
         } else {
-          const createdOperator: operatorInterface = await getStaticInformation(`https://gamepress.gg/arknights/operator/${name}`);
+          const createdOperator: operatorInterface = await getStaticInformation(`https://ak.gamepress.gg/arknights/operator/${name}`);
           await Operator.create(createdOperator);
           count[1]++
         }

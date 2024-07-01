@@ -544,7 +544,7 @@ export let landingResponses = [
       cn: "4/14/2022",
       global: "10/19/2022",
     },
-    url: "https://gamepress.gg/arknights/operator/Rockrock",
+    url: "https://ak.gamepress.gg/arknights/operator/Rockrock",
   },
   {
     name: "Rockrock",
@@ -1091,7 +1091,7 @@ export let landingResponses = [
       cn: "4/14/2022",
       global: "10/19/2022",
     },
-    url: "https://gamepress.gg/arknights/operator/Rockrock",
+    url: "https://ak.gamepress.gg/arknights/operator/Rockrock",
   },
   {
     name: "Horn",
@@ -1782,7 +1782,7 @@ export let landingResponses = [
       cn: "4/14/2022",
       global: "10/19/2022",
     },
-    url: "https://gamepress.gg/arknights/operator/Horn",
+    url: "https://ak.gamepress.gg/arknights/operator/Horn",
   },
   {
     name: "Siege",
@@ -2611,6 +2611,6 @@ export let landingResponses = [
       cn: "4/30/2019",
       global: "1/16/2020",
     },
-    url: "https://gamepress.gg/arknights/operator/Siege",
+    url: "https://ak.gamepress.gg/arknights/operator/Siege",
   },
 ];
